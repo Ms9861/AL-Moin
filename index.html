@@ -100,7 +100,13 @@ function tick(){let d=new Date(),t=dateLong(d),tm=timeLong(d);$("customerClock")
 
 function openAdmin(){if(unlocked){showAdmin();return}$("loginModal").classList.remove("hidden");$("pin").value="";$("pinErr").textContent="";setTimeout(()=>$("pin").focus(),80)}
 function login(){if($("pin").value===String(data.password)){unlocked=true;$("loginModal").classList.add("hidden");showAdmin();toast("Admin unlocked")}else $("pinErr").textContent="Incorrect PIN"}
-function showAdmin(){$("customerView").classList.add("hidden");$("adminView").classList.remove("hidden");renderAdmin();syncOrdersFromServer(false);startOrderPolling()}
+function showAdmin(){
+  $("customerView").classList.add("hidden");$("adminView").classList.remove("hidden");
+  renderAdmin();
+  updateOnlineStatus("SYNCING…");
+  syncOrdersFromServer(false);
+  startOrderPolling();
+}
 function logout(){unlocked=false;$("adminView").classList.add("hidden");$("customerView").classList.remove("hidden");renderCustomer();toast("Admin locked")}
 function changePin(){let p=prompt("Enter a new PIN (4+ digits):");if(p===null)return;if(!/^\d{4,}$/.test(p))return alert("PIN must be at least 4 digits.");data.password=p;save();toast("PIN changed")}
 function tab(id,btn){["dashboard","orders","accounting","menu","settings"].forEach(x=>$(x).classList.add("hidden"));$(id).classList.remove("hidden");document.querySelectorAll("#adminNav button").forEach(b=>b.classList.remove("active"));if(btn)btn.classList.add("active");if(id==="orders")renderOrders();if(id==="accounting")renderAccounting();if(id==="menu")renderMenuAdmin()}
@@ -131,11 +137,16 @@ async function placeOrder(){
  let total=items.reduce((s,x)=>s+x.price*x.qty,0),cost=items.reduce((s,x)=>s+x.cost*x.qty,0),prep=items.reduce((s,x)=>Math.max(s,(data.menu.find(m=>m.id===x.id)?.prep||0)),0);
  let id="ORD-"+now.getTime().toString().slice(-8);
  let order={id,createdAt:now.toISOString(),customer:name,phone,table:$("cTable").value.trim(),notes:$("cNotes").value.trim(),items,total,cost,prep,status:"New",paymentMethod:$("cPayment").value,paymentStatus:$("cPayment").value==="CASH"?"Pay at Counter":"Pending"};
- data.orders.unshift(order);save();cart=[];renderCart();showSuccess(order);
+ data.orders.unshift(order);save();cart=[];renderCart();
  const cfg=onlineConfig();
  let synced=false;
  if(cfg.apiUrl&&cfg.publicKey) synced=await syncOrderToServer(order,cfg);
- if(!synced&&data.settings.whatsapp){let p=data.settings.whatsapp.replace(/\D/g,"");if(p)window.open("https://wa.me/"+p+"?text="+encodeURIComponent("NEW ORDER "+id+"\nGuest: "+order.customer+"\nTable: "+order.table+"\nTotal: "+cur(total)),"_blank")}
+ if(synced){showSuccess(order);}
+ else {
+   $("successText").innerHTML="<b>Order saved on this phone.</b><br><span style=\"color:#a11\">We could not confirm delivery to the restaurant server.</span><br>Please contact the restaurant before leaving this page.";
+   $("successModal").classList.remove("hidden");
+   if(data.settings.whatsapp){let p=data.settings.whatsapp.replace(/\D/g,"");if(p)window.open("https://wa.me/"+p+"?text="+encodeURIComponent("NEW ORDER "+id+"\nGuest: "+order.customer+"\nTable: "+order.table+"\nTotal: "+cur(total)),"_blank")}
+ }
  if(order.paymentMethod==="UPI")setTimeout(()=>showPayment(order),250);
  if(data.settings.autoSendInvoice&&data.settings.whatsappApiUrl)setTimeout(()=>{showInvoice(order.id);autoSendInvoicePDF(order.id)},500);
 }
@@ -182,6 +193,17 @@ async function markPayment(id,status){let o=data.orders.find(x=>x.id===id);if(!o
 async function pushOrderUpdate(o){const cfg=onlineConfig();if(!cfg.apiUrl||!cfg.adminKey)return false;try{const j=await jsonpRequest(serverUrl(cfg,{action:"updateStatus",key:cfg.adminKey,payload:JSON.stringify({id:o.id,status:o.status,paymentStatus:o.paymentStatus,cancelledAt:o.cancelledAt||""})}),15000);if(!j||!j.ok)throw new Error((j&&j.error)||"Update rejected");return true}catch(e){console.error(e);toast("Order updated locally, but server update failed: "+e.message);return false}}
 function dayStats(k){let os=data.orders.filter(o=>key(o.createdAt)===k&&o.status!=="Cancelled"),ex=data.expenses.filter(e=>e.date===k);let sales=os.reduce((s,o)=>s+Number(o.total||0),0),cost=os.reduce((s,o)=>s+Number(o.cost||0),0),expense=ex.reduce((s,e)=>s+Number(e.amount||0),0),items=os.reduce((s,o)=>s+(o.items||[]).reduce((a,i)=>a+i.qty,0),0);return{os,sales,cost,expense,profit:sales-cost-expense,items}}
 let remoteTimer=null;
+function updateOnlineStatus(msg){
+  let el=$("onlineStatus");
+  if(!el){
+    el=document.createElement("div");
+    el.id="onlineStatus";
+    el.style.cssText="position:fixed;right:14px;bottom:14px;z-index:9999;padding:9px 12px;border-radius:999px;background:#111;color:#fff;font-size:12px;box-shadow:0 6px 20px rgba(0,0,0,.18);";
+    document.body.appendChild(el);
+  }
+  el.textContent=msg;
+  el.style.background=String(msg).startsWith("CONNECTED")?"#176b3a":String(msg).startsWith("OFFLINE")?"#9b1c1c":"#111";
+}
 async function syncOrdersFromServer(showMsg=false){
  if(!unlocked)return false;const cfg=onlineConfig();if(!cfg.apiUrl||!cfg.adminKey){updateOnlineStatus("Missing Web App URL or Admin key");return false}
  try{const j=await jsonpRequest(serverUrl(cfg,{action:"orders",key:cfg.adminKey}),15000);if(!j||!j.ok)throw new Error((j&&j.error)||"Could not load orders");const incoming=Array.isArray(j.orders)?j.orders:[],beforeIds=new Set(data.orders.map(o=>o.id)),map=new Map(data.orders.map(o=>[o.id,o]));incoming.forEach(o=>map.set(o.id,o));const added=incoming.filter(o=>!beforeIds.has(o.id));data.orders=[...map.values()].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));save();renderOrders();renderAdmin();updateOnlineStatus("CONNECTED ✓ • "+incoming.length+" online orders");if(added.length)notifyNewOrder(added.length);if(showMsg)toast("Orders refreshed from server");return true}catch(e){console.error(e);updateOnlineStatus("OFFLINE ✕ • "+e.message);if(showMsg)toast("Could not refresh online orders: "+e.message);return false}
