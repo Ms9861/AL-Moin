@@ -76,7 +76,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;background:rad
 const STORE="MAISON_RESTAURANT_OS_V3";
 const DEFAULT={
  password:"1234",
- settings:{name:"MAISON",tagline:"Fine Dining • Crafted With Care",whatsapp:"",currency:"₹",notice:"Welcome. Freshly prepared to order.",gstin:"",address:"",phone:"",email:"",gstRate:5,logo:"",upiId:"",upiName:"",paymentNote:"Thank you for your order! Please complete payment using UPI.",whatsappApiUrl:"",autoSendInvoice:false,apiUrl:"https://script.google.com/macros/s/AKfycbwXy21xUF-M3pCJWnK93v2DoHOUCDJoBAhWE4yXnZOaX73FQu8GHLK2yLuA7nzs41Qp/exec",apiPublicKey:"ALMOIN_PUBLIC_2026",apiKey:"ALMOIN_ADMIN_2026"},
+ settings:{name:"MAISON",tagline:"Fine Dining • Crafted With Care",whatsapp:"",currency:"₹",notice:"Welcome. Freshly prepared to order.",gstin:"",address:"",phone:"",email:"",gstRate:5,logo:"",upiId:"",upiName:"",paymentNote:"Thank you for your order! Please complete payment using UPI.",whatsappApiUrl:"",autoSendInvoice:false,apiUrl:"https://script.google.com/macros/s/AKfycbwXy21xUF-M3pCJWnK93v2DoHOUCDJoBAhWE4yXnZOaX73FQu8GHLK2yLuA7nzs41Qp/exec",apiPublicKey:"ALMOIN_PUBLIC_2026",apiKey:""},
  menu:[
  {id:"M1",name:"Paneer Tikka",category:"Starters",price:180,cost:70,prep:15,description:"Char-grilled cottage cheese, herbs",image:"https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=900&q=80",available:true},
  {id:"M2",name:"Veg Biryani",category:"Main Course",price:220,cost:85,prep:20,description:"Aromatic basmati rice & vegetables",image:"https://images.unsplash.com/photo-1563379091339-03246963d29c?auto=format&fit=crop&w=900&q=80",available:true},
@@ -88,19 +88,7 @@ const DEFAULT={
 let data=load(),cart=[],cat="All",unlocked=false;
 
 function $(x){return document.getElementById(x)}
-function load(){
- try{
-  let x=JSON.parse(localStorage.getItem(STORE));
-  if(!x||!x.menu||!x.settings)return structuredClone(DEFAULT);
-  x.settings={...structuredClone(DEFAULT.settings),...(x.settings||{})};
-  x.settings.apiUrl=DEFAULT.settings.apiUrl||x.settings.apiUrl||"";
-  x.settings.apiPublicKey=DEFAULT.settings.apiPublicKey||x.settings.apiPublicKey||"";
-  if(!x.settings.apiKey)x.settings.apiKey="ALMOIN_ADMIN_2026";
-  if(!Array.isArray(x.orders))x.orders=[];
-  if(!Array.isArray(x.expenses))x.expenses=[];
-  return x;
- }catch(e){return structuredClone(DEFAULT)}
-}
+function load(){try{let x=JSON.parse(localStorage.getItem(STORE));return x&&x.menu&&x.settings?x:structuredClone(DEFAULT)}catch(e){return structuredClone(DEFAULT)}}
 function save(){localStorage.setItem(STORE,JSON.stringify(data))}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function cur(n){return (data.settings.currency||"₹")+Math.round(Number(n)||0)}
@@ -141,9 +129,9 @@ const ONLINE_PUBLIC_KEY="ALMOIN_PUBLIC_2026";
 function onlineConfig(){
  const q=new URLSearchParams(location.search);
  return {
-   apiUrl:(q.get("api")||ONLINE_API_URL||data.settings.apiUrl||"").trim(),
-   publicKey:(q.get("pk")||ONLINE_PUBLIC_KEY||data.settings.apiPublicKey||"").trim(),
-   adminKey:(data.settings.apiKey||"ALMOIN_ADMIN_2026").trim()
+   apiUrl:(q.get("api")||data.settings.apiUrl||ONLINE_API_URL||"").trim(),
+   publicKey:(q.get("pk")||data.settings.apiPublicKey||ONLINE_PUBLIC_KEY||"").trim(),
+   adminKey:(data.settings.apiKey||"").trim()
  };
 }
 async function placeOrder(){
@@ -179,32 +167,18 @@ function jsonpRequest(url,timeoutMs=15000){
  });
 }
 function serverUrl(cfg,params){return cfg.apiUrl+(cfg.apiUrl.includes("?")?"&":"?")+Object.entries(params).map(([k,v])=>encodeURIComponent(k)+"="+encodeURIComponent(v==null?"":String(v))).join("&")}
-function queuePendingOrder(order){
- try{let q=JSON.parse(localStorage.getItem("ALMOIN_PENDING_ORDERS")||"[]");if(!q.some(x=>x.id===order.id)){q.push(order);localStorage.setItem("ALMOIN_PENDING_ORDERS",JSON.stringify(q))}}catch(e){}
-}
-function removePendingOrder(id){try{let q=JSON.parse(localStorage.getItem("ALMOIN_PENDING_ORDERS")||"[]");q=q.filter(x=>x.id!==id);localStorage.setItem("ALMOIN_PENDING_ORDERS",JSON.stringify(q))}catch(e){}}
-async function flushPendingOrders(){
- const cfg=onlineConfig();if(!cfg.apiUrl||!cfg.publicKey)return;
- let q=[];try{q=JSON.parse(localStorage.getItem("ALMOIN_PENDING_ORDERS")||"[]")}catch(e){q=[]}
- for(const o of q.slice(0,10)){const ok=await syncOrderToServer(o,cfg,true);if(ok)removePendingOrder(o.id)}
-}
-async function syncOrderToServer(order,cfg=onlineConfig(),silent=false){
- if(!cfg.apiUrl||!cfg.publicKey){queuePendingOrder(order);if(!silent)toast("Online order sync is not configured.");return false}
+async function syncOrderToServer(order,cfg=onlineConfig()){
+ if(!cfg.apiUrl||!cfg.publicKey){toast("Online order sync is not configured.");return false}
  let lastError=null;
  for(let attempt=1;attempt<=3;attempt++){
   try{
    const j=await jsonpRequest(serverUrl(cfg,{action:"order",publicKey:cfg.publicKey,payload:JSON.stringify(order)}),20000);
    if(!j||!j.ok)throw new Error((j&&j.error)||"Server rejected the order");
-   order.syncedAt=new Date().toISOString();save();removePendingOrder(order.id);
-   if(!silent)toast("✓ Order received by restaurant server");
-   return true;
+   order.syncedAt=new Date().toISOString();save();toast("✓ Order received by restaurant server");return true;
   }catch(e){lastError=e;console.error("Order sync attempt "+attempt,e);if(attempt<3)await new Promise(r=>setTimeout(r,1200));}
  }
- queuePendingOrder(order);
- if(!silent)toast("❌ Online sync failed: "+(lastError?.message||"Unknown error")+". Order queued for retry.");
- return false;
+ toast("❌ Online sync failed after 3 attempts: "+(lastError?.message||"Unknown error"));return false
 }
-
 async function bootstrapOnlineData(){
  const cfg=onlineConfig();
  if(!cfg.apiUrl||!cfg.publicKey)return;
@@ -234,7 +208,44 @@ function closePayment(){$('paymentModal').classList.add('hidden')}
 function openUpiPayment(){if(!window.currentUpiUrl)return alert("Restaurant UPI ID is not configured in Admin → Settings.");window.location.href=window.currentUpiUrl}
 async function copyUpiPayment(){let id=data.settings.upiId||"";if(!id)return alert("Restaurant UPI ID is not configured.");try{await navigator.clipboard.writeText(id);toast("UPI ID copied: "+id)}catch(e){prompt("Copy UPI ID",id)}}
 async function markPayment(id,status){let o=data.orders.find(x=>x.id===id);if(!o)return;o.paymentStatus=status;save();renderOrders();toast("Payment marked as "+status);await pushOrderUpdate(o)}
-async function pushOrderUpdate(o){const cfg=onlineConfig();if(!cfg.apiUrl||!cfg.adminKey)return false;try{const j=await jsonpRequest(serverUrl(cfg,{action:"updateStatus",key:cfg.adminKey,payload:JSON.stringify({id:o.id,status:o.status,paymentStatus:o.paymentStatus,cancelledAt:o.cancelledAt||""})}),15000);if(!j||!j.ok)throw new Error((j&&j.error)||"Update rejected");return true}catch(e){console.error(e);toast("Order updated locally, but server update failed: "+e.message);return false}}
+const PENDING_UPDATES_KEY="ALMOIN_PENDING_UPDATES_HARD_V1";
+const CANCELLED_LOCK_KEY="ALMOIN_CANCELLED_LOCK_HARD_V1";
+function pendingUpdates(){try{return JSON.parse(localStorage.getItem(PENDING_UPDATES_KEY)||"{}")}catch(e){return {}}}
+function cancelledLocks(){try{return JSON.parse(localStorage.getItem(CANCELLED_LOCK_KEY)||"{}")}catch(e){return {}}}
+function lockCancelled(id,at){let x=cancelledLocks();x[String(id)]={cancelledAt:at||new Date().toISOString()};localStorage.setItem(CANCELLED_LOCK_KEY,JSON.stringify(x))}
+function unlockCancelled(id){let x=cancelledLocks();delete x[String(id)];localStorage.setItem(CANCELLED_LOCK_KEY,JSON.stringify(x))}
+function rememberPending(o){let p=pendingUpdates();p[o.id]={status:o.status,paymentStatus:o.paymentStatus||"Pending",cancelledAt:o.cancelledAt||""};localStorage.setItem(PENDING_UPDATES_KEY,JSON.stringify(p))}
+function clearPending(id){let p=pendingUpdates();delete p[id];localStorage.setItem(PENDING_UPDATES_KEY,JSON.stringify(p))}
+async function pushOrderUpdate(o,quiet=false){
+ const cfg=onlineConfig();rememberPending(o);
+ if(!cfg.apiUrl||!cfg.adminKey){if(!quiet)toast("Order updated locally; online settings are missing.");return false}
+ try{
+  const action=o.status==="Cancelled"?"cancel":"updateStatus";
+  const j=await jsonpRequest(serverUrl(cfg,{action:action,key:cfg.adminKey,payload:JSON.stringify({id:o.id,status:o.status,paymentStatus:o.paymentStatus,cancelledAt:o.cancelledAt||""})}),15000);
+  if(!j||!j.ok)throw new Error((j&&j.error)||"Update rejected");
+  if(o.status!=="Cancelled")clearPending(o.id);
+  return true;
+ }catch(e){console.error(e);if(!quiet)toast("Order update failed: "+e.message);return false}
+}
+async function verifyCancelledOnServer(o){
+ const cfg=onlineConfig();if(!cfg.apiUrl||!cfg.adminKey)return false;
+ try{
+  const j=await jsonpRequest(serverUrl(cfg,{action:"orders",key:cfg.adminKey}),15000);
+  if(!j||!j.ok)throw new Error((j&&j.error)||"Verification failed");
+  const remote=(j.orders||[]).find(x=>String(x.id)===String(o.id));
+  if(remote&&remote.status==="Cancelled"){
+   clearPending(o.id);unlockCancelled(o.id);o.status="Cancelled";o.cancelledAt=remote.cancelledAt||o.cancelledAt;save();renderAdmin();return true;
+  }
+ }catch(e){console.error("Cancel verification failed",e)}
+ return false;
+}
+async function retryPendingUpdates(){
+ const p=pendingUpdates();
+ for(const id of Object.keys(p)){
+  const o=data.orders.find(x=>String(x.id)===String(id));
+  if(o){if(o.status==="Cancelled")lockCancelled(o.id,o.cancelledAt);const ok=await pushOrderUpdate(o,true);if(ok&&o.status==="Cancelled")await verifyCancelledOnServer(o)}
+ }
+}}
 function dayStats(k){let os=data.orders.filter(o=>key(o.createdAt)===k&&o.status!=="Cancelled"),ex=data.expenses.filter(e=>e.date===k);let sales=os.reduce((s,o)=>s+Number(o.total||0),0),cost=os.reduce((s,o)=>s+Number(o.cost||0),0),expense=ex.reduce((s,e)=>s+Number(e.amount||0),0),items=os.reduce((s,o)=>s+(o.items||[]).reduce((a,i)=>a+i.qty,0),0);return{os,sales,cost,expense,profit:sales-cost-expense,items}}
 let remoteTimer=null;
 function updateOnlineStatus(msg){
@@ -250,21 +261,48 @@ function updateOnlineStatus(msg){
 }
 async function syncOrdersFromServer(showMsg=false){
  if(!unlocked)return false;const cfg=onlineConfig();if(!cfg.apiUrl||!cfg.adminKey){updateOnlineStatus("Missing Web App URL or Admin key");return false}
- try{const j=await jsonpRequest(serverUrl(cfg,{action:"orders",key:cfg.adminKey}),15000);if(!j||!j.ok)throw new Error((j&&j.error)||"Could not load orders");const incoming=Array.isArray(j.orders)?j.orders:[],beforeIds=new Set(data.orders.map(o=>o.id)),map=new Map(data.orders.map(o=>[o.id,o]));incoming.forEach(o=>map.set(o.id,o));const added=incoming.filter(o=>!beforeIds.has(o.id));data.orders=[...map.values()].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));save();renderOrders();renderAdmin();updateOnlineStatus("CONNECTED ✓ • "+incoming.length+" online orders");if(added.length)notifyNewOrder(added.length);if(showMsg)toast("Orders refreshed from server");return true}catch(e){console.error(e);updateOnlineStatus("OFFLINE ✕ • "+e.message);if(showMsg)toast("Could not refresh online orders: "+e.message);return false}
+ try{
+  const j=await jsonpRequest(serverUrl(cfg,{action:"orders",key:cfg.adminKey}),15000);
+  if(!j||!j.ok)throw new Error((j&&j.error)||"Could not load orders");
+  const incoming=Array.isArray(j.orders)?j.orders:[], beforeIds=new Set(data.orders.map(o=>o.id)), pending=pendingUpdates(), map=new Map(data.orders.map(o=>[o.id,o]));
+  const locks=cancelledLocks();
+   incoming.forEach(serverOrder=>{
+     const local=map.get(serverOrder.id), pend=pending[serverOrder.id], lock=locks[String(serverOrder.id)];
+     if((lock||pend?.status==="Cancelled") && local && serverOrder.status!=="Cancelled"){
+       map.set(serverOrder.id,Object.assign({},serverOrder,{status:"Cancelled",cancelledAt:local.cancelledAt||lock?.cancelledAt||serverOrder.cancelledAt||""}));
+     }else if(pend&&local){
+       map.set(serverOrder.id,Object.assign({},serverOrder,{status:local.status,paymentStatus:local.paymentStatus||serverOrder.paymentStatus,cancelledAt:local.cancelledAt||serverOrder.cancelledAt||""}));
+     }else{
+       map.set(serverOrder.id,serverOrder);
+       if(serverOrder.status==="Cancelled")unlockCancelled(serverOrder.id);
+     }
+   });
+  const added=incoming.filter(o=>!beforeIds.has(o.id));
+  data.orders=[...map.values()].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));save();renderOrders();renderAdmin();updateOnlineStatus("CONNECTED ✓ • "+incoming.length+" online orders");
+  if(added.length)notifyNewOrder(added.length);if(showMsg)toast("Orders refreshed from server");return true;
+ }catch(e){console.error(e);updateOnlineStatus("OFFLINE ✕ • "+e.message);if(showMsg)toast("Could not refresh online orders: "+e.message);return false}
 }
 function notifyNewOrder(n){
  try{if(window.AudioContext||window.webkitAudioContext){let A=window.AudioContext||window.webkitAudioContext,c=new A();let o=c.createOscillator(),g=c.createGain();o.frequency.value=880;g.gain.value=.06;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.18);setTimeout(()=>{let o2=c.createOscillator();o2.frequency.value=1175;o2.connect(g);o2.start();o2.stop(c.currentTime+.18)},220)}}catch(e){}
  toast(n+" new order"+(n>1?"s":"")+" received");
 }
-function startOrderPolling(){clearInterval(remoteTimer);remoteTimer=setInterval(()=>syncOrdersFromServer(false),4000)}
+function startOrderPolling(){clearInterval(remoteTimer);remoteTimer=setInterval(()=>{syncOrdersFromServer(false);retryPendingUpdates()},4000)}
 startOrderPolling();
-setTimeout(flushPendingOrders,2500);
-setInterval(flushPendingOrders,15000);
 
 function renderAdmin(){let a=dayStats(key());$("dSales").textContent=cur(a.sales);$("dCost").textContent=cur(a.cost);$("dProfit").textContent=cur(a.profit);$("dOrders").textContent=a.os.length;$("dNew").textContent=a.os.filter(o=>o.status==="New").length;$("dPrep").textContent=a.os.filter(o=>o.status==="Preparing").length;$("dReady").textContent=a.os.filter(o=>o.status==="Ready").length;$("dExp").textContent=cur(a.expense);$("dAvg").textContent=cur(a.os.length?a.sales/a.os.length:0);$("dItems").textContent=a.items;fillSettings();renderOrders();renderMenuAdmin()}
 function renderOrders(){let q=($("orderSearch")?.value||"").toLowerCase(),os=data.orders.filter(o=>(o.id+" "+o.customer+" "+o.phone+" "+o.table).toLowerCase().includes(q));$("ordersList").innerHTML=os.map(o=>`<article class="order"><div><b>${esc(o.id)}</b><br>${esc(o.customer)}<br>📞 ${esc(o.phone)}<br>Table ${esc(o.table||"—")}<br><span class="badge ${o.status==="New"?"bNew":o.status==="Preparing"?"bPreparing":o.status==="Ready"?"bReady":o.status==="Cancelled"?"bCancelled":"bCompleted"}">${o.status}</span></div><div>${o.items.map(i=>esc(i.name)+" × "+i.qty).join("<br>")}<div class="muted">${esc(o.notes||"")}</div></div><div><b>${cur(o.total)}</b><br>Food cost ${cur(o.cost)}<br>Profit ${cur(o.total-o.cost)}<br>Prep ${o.prep} min<br>Payment: <b>${esc(o.paymentStatus||"Pending")}</b><br><span class="muted">${dateLong(o.createdAt)}<br>${timeLong(o.createdAt)}</span></div><div class="actions">${o.status==="New"?`<button class="btn dark" onclick="statusOrder('${o.id}','Preparing')">Start Preparing</button>`:""}${o.status==="Preparing"?`<button class="btn green" onclick="statusOrder('${o.id}','Ready')">Mark Ready</button>`:""}${o.status==="Ready"?`<button class="btn gold" onclick="statusOrder('${o.id}','Completed')">Complete</button>`:""}<button class="btn" onclick="showInvoice('${o.id}')">Bill</button><button class="btn" onclick="printReceipt('${o.id}')">Receipt</button><button class="btn" onclick="sendBillWhatsApp('${o.id}')">WhatsApp Bill</button>${o.paymentMethod==="UPI"&&o.paymentStatus!=="Paid"?`<button class="btn green" onclick="markPayment('${o.id}','Paid')">Mark Paid</button>`:""}${!['Completed','Cancelled'].includes(o.status)?`<button class="btn red" onclick="cancelOrder('${o.id}')">Cancel</button>`:""}</div></article>`).join("")||"<div class='muted' style='padding:18px'>No orders found.</div>"}
 async function statusOrder(id,s){let o=data.orders.find(x=>x.id===id);if(!o)return;o.status=s;save();renderAdmin();toast(id+" → "+s);await pushOrderUpdate(o)}
-function cancelOrder(id){let o=data.orders.find(x=>x.id===id);if(!o)return;if(confirm("Cancel this order? It will remain in the order history but will not count toward sales/profit.")){o.status="Cancelled";o.cancelledAt=new Date().toISOString();save();renderAdmin();toast(id+" → Cancelled");pushOrderUpdate(o)}}
+async function cancelOrder(id){
+ let o=data.orders.find(x=>x.id===id);if(!o)return;
+ if(!confirm("Cancel this order? It will remain in the order history but will not count toward sales/profit."))return;
+ o.status="Cancelled";o.cancelledAt=o.cancelledAt||new Date().toISOString();
+ lockCancelled(o.id,o.cancelledAt);rememberPending(o);save();renderAdmin();toast(id+" → Cancelled");
+ const ok=await pushOrderUpdate(o);
+ if(ok){
+   const verified=await verifyCancelledOnServer(o);
+   toast(verified?id+" → Cancelled and verified ✓":id+" → Cancellation sent; verification pending");
+ }else toast(id+" → Cancelled locally; server retry pending");
+}
 function showSuccess(id,prep){$("successText").innerHTML="Your order <b>"+esc(id)+"</b> has been received.<br>Estimated preparation time: <b>"+prep+" minutes</b>.";$("successModal").classList.remove("hidden")}
 function closeSuccess(){$("successModal").classList.add("hidden")}
 function orderWA(id){let o=data.orders.find(x=>x.id===id);if(!o)return;let p=o.phone.replace(/\D/g,"");if(!p)return toast("No phone number");window.open("https://wa.me/"+p+"?text="+encodeURIComponent("Order "+o.id+"\\nStatus: "+o.status+"\\nTotal: "+cur(o.total)),"_blank")}
