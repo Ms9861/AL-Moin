@@ -73,10 +73,10 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;background:rad
 <div id="printArea" class="printOnly"></div>
 
 <script>
-const STORE="AL_MOIN_RESTAURANT_OS_V4";
+const STORE="AL_MOIN_RESTAURANT";
 const DEFAULT={
  password:"1234",
- settings:{name:"AL-MOIN",tagline:"Fine Dining • Crafted With Care",whatsapp:"7240610313",currency:"₹",notice:"Welcome. Freshly prepared to order.",gstin:"08AVBPR7074Z1BK",address:"123, Mandia Road Opp Bhati Market, Pali, Rajasthan",phone:"7240610313",email:"mr.sohail451@gmail.com",gstRate:5,logo:"",upiId:"mr.sohail451-1@okhdfcbank",upiName:"AL-MOIN",paymentNote:"Thank you for your order! Please complete payment using UPI.",whatsappApiUrl:"",autoSendInvoice:false,apiUrl:"https://script.google.com/macros/s/AKfycbwXy21xUF-M3pCJWnK93v2DoHOUCDJoBAhWE4yXnZOaX73FQu8GHLK2yLuA7nzs41Qp/exec",apiPublicKey:"ALMOIN_PUBLIC_2026",apiKey:"ALMOIN_ADMIN_2026"},
+ settings:{name:"AL-MOIN",tagline:"Fine Dining • Crafted With Care",whatsapp:"7240610313",currency:"₹",notice:"Welcome. Freshly prepared to order.",gstin:"08AVBPR7074Z1BK",address:"123, Mandia Road Opp Bhati Market, Pali, Rajasthan",phone:"7240610313",email:"mr.sohail451@gmail.com",gstRate:5,logo:"",upiId:"mr.sohail451-1@okhdfcbank",upiName:"MOHD SOHAIL",paymentNote:"Thank you for your order! Please complete payment using UPI.",whatsappApiUrl:"",autoSendInvoice:false,apiUrl:"https://script.google.com/macros/s/AKfycbwt006ouV72wh6x_sytrLgt5JA6HpCkPVpZUimxjghFWHmFWr9r0Pu7CJMTxGp3fM5u/exec",apiPublicKey:"ALMOIN_PUBLIC_2026",apiKey:"ALMOIN_ADMIN_2026"},
  menu:[
  {id:"M1",name:"Paneer Tikka",category:"Starters",price:180,cost:70,prep:15,description:"Char-grilled cottage cheese, herbs",image:"https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=900&q=80",available:true},
  {id:"M2",name:"Veg Biryani",category:"Main Course",price:220,cost:85,prep:20,description:"Aromatic basmati rice & vegetables",image:"https://images.unsplash.com/photo-1563379091339-03246963d29c?auto=format&fit=crop&w=900&q=80",available:true},
@@ -124,7 +124,7 @@ function renderCustomer(){
 function addCart(id){let m=data.menu.find(x=>x.id===id);if(!m||m.available===false)return;let c=cart.find(x=>x.id===id);c?c.qty++:cart.push({id,qty:1});renderCart();toast(m.name+" added")}
 function changeCart(id,n){let c=cart.find(x=>x.id===id);if(!c)return;c.qty+=n;if(c.qty<1)cart=cart.filter(x=>x.id!==id);renderCart()}
 function renderCart(){let total=cart.reduce((s,c)=>{let m=data.menu.find(x=>x.id===c.id);return s+(m?m.price*c.qty:0)},0);$("cartTotal").textContent=cur(total);$("placeTotal").textContent=cur(total);$("cartCount").textContent=cart.reduce((s,x)=>s+x.qty,0)+" items";$("cartItems").innerHTML=cart.map(c=>{let m=data.menu.find(x=>x.id===c.id);return `<div class="cartitem"><span>${esc(m?.name||"Item")} × ${c.qty}<br><small class="muted">${cur((m?.price||0)*c.qty)}</small></span><span class="q"><button onclick="changeCart('${c.id}',-1)">−</button> <button onclick="changeCart('${c.id}',1)">+</button></span></div>`}).join("")||"<div class='muted' style='padding:12px 0'>Your order is empty.</div>"}
-const ONLINE_API_URL="https://script.google.com/macros/s/AKfycbwXy21xUF-M3pCJWnK93v2DoHOUCDJoBAhWE4yXnZOaX73FQu8GHLK2yLuA7nzs41Qp/exec";
+const ONLINE_API_URL="https://script.google.com/macros/s/AKfycbwt006ouV72wh6x_sytrLgt5JA6HpCkPVpZUimxjghFWHmFWr9r0Pu7CJMTxGp3fM5u/exec";
 const ONLINE_PUBLIC_KEY="ALMOIN_PUBLIC_2026";
 function onlineConfig(){
  const q=new URLSearchParams(location.search);
@@ -137,7 +137,7 @@ function onlineConfig(){
 async function placeOrder(){
  if(!cart.length)return alert("Please add at least one dish.");
  const name=$("cName").value.trim(), phone=$("cPhone").value.trim();
- if(!name||!phone)return alert("Please enter guest name and phone.");
+ if(!name||!phone)return alert("Please enter your name and phone.");
  let now=new Date();
  let items=cart.map(c=>{let m=data.menu.find(x=>x.id===c.id);return{id:m.id,name:m.name,qty:c.qty,price:Number(m.price)||0,cost:Number(m.cost)||0}});
  let total=items.reduce((s,x)=>s+x.price*x.qty,0),cost=items.reduce((s,x)=>s+x.cost*x.qty,0),prep=items.reduce((s,x)=>Math.max(s,(data.menu.find(m=>m.id===x.id)?.prep||0)),0);
