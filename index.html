@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0c0c0b">
-<title>MAISON — Restaurant OS</title>
+<title>AL-MOIN — Restaurant OS</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{--bg:#f5f2eb;--panel:#fff;--ink:#11110f;--muted:#7b776e;--line:#e7e1d6;--gold:#b88a43;--gold2:#e5c17b;--green:#28785a;--red:#b64c4c;--blue:#5574a8;--dark:#10100f;--shadow:0 14px 40px rgba(20,18,12,.08);--r:16px}
@@ -35,8 +35,8 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;background:rad
 
 <!-- CUSTOMER APP -->
 <div id="customerView">
-<header class="top"><div class="topin"><div class="brand"><div class="mark">M</div><div class="brandname" id="brandName">MAISON</div></div><button class="topbtn" onclick="openAdmin()">🔒 Admin</button></div></header>
-<section class="hero"><div class="eyebrow">EST. • PREMIUM DINING</div><h1 id="heroName">MAISON</h1><p id="heroTagline">Fine Dining • Crafted With Care</p><div class="clockpill">● <span id="customerClock"></span></div><div id="tableText" style="color:#ddc797;margin-top:10px"></div></section>
+<header class="top"><div class="topin"><div class="brand"><div class="mark">M</div><div class="brandname" id="brandName">AL-MOIN</div></div><button class="topbtn" onclick="openAdmin()">🔒 Admin</button></div></header>
+<section class="hero"><div class="eyebrow">EST. • PREMIUM DINING</div><h1 id="heroName">AL-MOIN</h1><p id="heroTagline">Fine Dining • Crafted With Care</p><div class="clockpill">● <span id="customerClock"></span></div><div id="tableText" style="color:#ddc797;margin-top:10px"></div></section>
 <main class="wrap"><div id="notice" class="notice hidden"></div><div class="filters" id="categories"></div><div class="menuGrid" id="menuGrid"></div>
 <section class="cart"><div class="carthead"><b>YOUR ORDER</b><span class="muted" id="cartCount">0 items</span></div><div id="cartItems"></div><div style="display:flex;justify-content:space-between;font-size:19px;margin-top:12px"><b>Total</b><b id="cartTotal">₹0</b></div>
 <div class="checkout"><input id="cName" placeholder="Guest name"><input id="cPhone" placeholder="Phone number"><input id="cTable" placeholder="Table number"><select id="cPayment" style="width:100%;padding:11px;border:1px solid #d9d4c9;border-radius:9px"><option value="UPI">Pay by UPI • QR / Payment Link</option><option value="CASH">Pay at Counter</option></select><textarea id="cNotes" placeholder="Special instructions"></textarea><button class="place" onclick="placeOrder()">Place Order • <span id="placeTotal">₹0</span></button></div></section>
@@ -44,7 +44,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;background:rad
 
 <!-- ADMIN APP -->
 <div id="adminView" class="hidden admin">
-<header class="adminHead"><div class="adminHeadIn"><div class="adminTopLine"><div class="adminTitle">MAISON • Restaurant OS</div><button class="lock" onclick="logout()">🔒 Lock</button></div>
+<header class="adminHead"><div class="adminHeadIn"><div class="adminTopLine"><div class="adminTitle">AL-MOIN • Restaurant OS</div><button class="lock" onclick="logout()">🔒 Lock</button></div>
 <nav class="nav" id="adminNav"><button class="active" onclick="tab('dashboard',this)">⌂ Dashboard</button><button onclick="tab('orders',this)">▣ Orders</button><button onclick="tab('accounting',this)">₹ Accounting</button><button onclick="tab('menu',this)">☷ Menu</button><button onclick="tab('settings',this)">⚙ Settings</button></nav></div></header>
 <main class="adminMain">
 
@@ -73,10 +73,10 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;background:rad
 <div id="printArea" class="printOnly"></div>
 
 <script>
-const STORE="MAISON_RESTAURANT_OS_V3";
+const STORE="AL_MOIN_RESTAURANT_OS_V4";
 const DEFAULT={
  password:"1234",
- settings:{name:"MAISON",tagline:"Fine Dining • Crafted With Care",whatsapp:"",currency:"₹",notice:"Welcome. Freshly prepared to order.",gstin:"",address:"",phone:"",email:"",gstRate:5,logo:"",upiId:"",upiName:"",paymentNote:"Thank you for your order! Please complete payment using UPI.",whatsappApiUrl:"",autoSendInvoice:false,apiUrl:"https://script.google.com/macros/s/AKfycbwXy21xUF-M3pCJWnK93v2DoHOUCDJoBAhWE4yXnZOaX73FQu8GHLK2yLuA7nzs41Qp/exec",apiPublicKey:"ALMOIN_PUBLIC_2026",apiKey:""},
+ settings:{name:"AL-MOIN",tagline:"Fine Dining • Crafted With Care",whatsapp:"7240610313",currency:"₹",notice:"Welcome. Freshly prepared to order.",gstin:"08AVBPR7074Z1BK",address:"123, Mandia Road Opp Bhati Market, Pali, Rajasthan",phone:"7240610313",email:"mr.sohail451@gmail.com",gstRate:5,logo:"",upiId:"mr.sohail451-1@okhdfcbank",upiName:"AL-MOIN",paymentNote:"Thank you for your order! Please complete payment using UPI.",whatsappApiUrl:"",autoSendInvoice:false,apiUrl:"https://script.google.com/macros/s/AKfycbwXy21xUF-M3pCJWnK93v2DoHOUCDJoBAhWE4yXnZOaX73FQu8GHLK2yLuA7nzs41Qp/exec",apiPublicKey:"ALMOIN_PUBLIC_2026",apiKey:"ALMOIN_ADMIN_2026"},
  menu:[
  {id:"M1",name:"Paneer Tikka",category:"Starters",price:180,cost:70,prep:15,description:"Char-grilled cottage cheese, herbs",image:"https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=900&q=80",available:true},
  {id:"M2",name:"Veg Biryani",category:"Main Course",price:220,cost:85,prep:20,description:"Aromatic basmati rice & vegetables",image:"https://images.unsplash.com/photo-1563379091339-03246963d29c?auto=format&fit=crop&w=900&q=80",available:true},
@@ -113,7 +113,7 @@ function tab(id,btn){["dashboard","orders","accounting","menu","settings"].forEa
 function tabById(id){let btn=[...document.querySelectorAll("#adminNav button")].find(b=>b.textContent.toLowerCase().includes(id==="accounting"?"account":id));tab(id,btn)}
 
 function renderCustomer(){
- $("brandName").textContent=data.settings.name||"MAISON";$("heroName").textContent=data.settings.name||"MAISON";$("heroTagline").textContent=data.settings.tagline||"";
+ $("brandName").textContent=data.settings.name||"AL-MOIN";$("heroName").textContent=data.settings.name||"AL-MOIN";$("heroTagline").textContent=data.settings.tagline||"";
  if(data.settings.notice){$("notice").textContent=data.settings.notice;$("notice").classList.remove("hidden")}else $("notice").classList.add("hidden");
  let table=new URLSearchParams(location.search).get("table");if(table){$("cTable").value=table;$("tableText").textContent="TABLE "+table}else $("tableText").textContent="";
  let cats=["All",...new Set(data.menu.map(x=>x.category).filter(Boolean))];$("categories").innerHTML=cats.map(c=>`<button class="${c===cat?"active":""}" onclick="cat='${esc(c)}';renderCustomer()">${esc(c)}</button>`).join("");
@@ -245,7 +245,7 @@ async function retryPendingUpdates(){
   const o=data.orders.find(x=>String(x.id)===String(id));
   if(o){if(o.status==="Cancelled")lockCancelled(o.id,o.cancelledAt);const ok=await pushOrderUpdate(o,true);if(ok&&o.status==="Cancelled")await verifyCancelledOnServer(o)}
  }
-}}
+}
 function dayStats(k){let os=data.orders.filter(o=>key(o.createdAt)===k&&o.status!=="Cancelled"),ex=data.expenses.filter(e=>e.date===k);let sales=os.reduce((s,o)=>s+Number(o.total||0),0),cost=os.reduce((s,o)=>s+Number(o.cost||0),0),expense=ex.reduce((s,e)=>s+Number(e.amount||0),0),items=os.reduce((s,o)=>s+(o.items||[]).reduce((a,i)=>a+i.qty,0),0);return{os,sales,cost,expense,profit:sales-cost-expense,items}}
 let remoteTimer=null;
 function updateOnlineStatus(msg){
@@ -517,7 +517,7 @@ function fillSettings(){
  $("sName").value=data.settings.name||"";$("sTagline").value=data.settings.tagline||"";$("sWhatsApp").value=data.settings.whatsapp||"";$("sPhone").value=data.settings.phone||"";$("sEmail").value=data.settings.email||"";$("sCurrency").value=data.settings.currency||"₹";$("sGSTIN").value=data.settings.gstin||"";$("sGSTRate").value=Number(data.settings.gstRate)||0;$("sLogo").value=data.settings.logo||"";$("sWhatsappApi").value=data.settings.whatsappApiUrl||"";$("sAutoInvoice").checked=!!data.settings.autoSendInvoice;$("sAddress").value=data.settings.address||"";$("sNotice").value=data.settings.notice||"";$("sApiUrl").value=data.settings.apiUrl||"";$("sApiPublicKey").value=data.settings.apiPublicKey||"";$("sApiKey").value=data.settings.apiKey||"";$("sUpiId").value=data.settings.upiId||"";$("sUpiName").value=data.settings.upiName||"";$("sPaymentNote").value=data.settings.paymentNote||"";
 }
 async function saveSettings(){
- data.settings.name=$("sName").value.trim()||"MAISON";data.settings.tagline=$("sTagline").value.trim();data.settings.whatsapp=$("sWhatsApp").value.trim();data.settings.phone=$("sPhone").value.trim();data.settings.email=$("sEmail").value.trim();data.settings.currency=$("sCurrency").value.trim()||"₹";data.settings.gstin=$("sGSTIN").value.trim();data.settings.gstRate=Math.max(0,Number($("sGSTRate").value)||0);data.settings.logo=$("sLogo").value.trim();data.settings.upiId=$("sUpiId").value.trim();data.settings.upiName=$("sUpiName").value.trim();data.settings.apiUrl=$("sApiUrl").value.trim();data.settings.apiPublicKey=$("sApiPublicKey").value.trim();data.settings.apiKey=$("sApiKey").value.trim();data.settings.whatsappApiUrl=$("sWhatsappApi").value.trim();data.settings.autoSendInvoice=$("sAutoInvoice").checked;data.settings.paymentNote=$("sPaymentNote").value.trim()||"Thank you for your order! Please complete payment using UPI.";data.settings.address=$("sAddress").value.trim();data.settings.notice=$("sNotice").value.trim();
+ data.settings.name=$("sName").value.trim()||"AL-MOIN";data.settings.tagline=$("sTagline").value.trim();data.settings.whatsapp=$("sWhatsApp").value.trim();data.settings.phone=$("sPhone").value.trim();data.settings.email=$("sEmail").value.trim();data.settings.currency=$("sCurrency").value.trim()||"₹";data.settings.gstin=$("sGSTIN").value.trim();data.settings.gstRate=Math.max(0,Number($("sGSTRate").value)||0);data.settings.logo=$("sLogo").value.trim();data.settings.upiId=$("sUpiId").value.trim();data.settings.upiName=$("sUpiName").value.trim();data.settings.apiUrl=$("sApiUrl").value.trim();data.settings.apiPublicKey=$("sApiPublicKey").value.trim();data.settings.apiKey=$("sApiKey").value.trim();data.settings.whatsappApiUrl=$("sWhatsappApi").value.trim();data.settings.autoSendInvoice=$("sAutoInvoice").checked;data.settings.paymentNote=$("sPaymentNote").value.trim()||"Thank you for your order! Please complete payment using UPI.";data.settings.address=$("sAddress").value.trim();data.settings.notice=$("sNotice").value.trim();
  save();renderCustomer();renderAdmin();const cfg=onlineConfig();if(cfg.apiUrl&&cfg.adminKey){try{const publicSettings={name:data.settings.name,tagline:data.settings.tagline,whatsapp:data.settings.whatsapp,currency:data.settings.currency,notice:data.settings.notice,gstin:data.settings.gstin,address:data.settings.address,phone:data.settings.phone,email:data.settings.email,gstRate:data.settings.gstRate,logo:data.settings.logo,upiId:data.settings.upiId,upiName:data.settings.upiName,paymentNote:data.settings.paymentNote};const r=await fetch(cfg.apiUrl,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"settings",key:cfg.adminKey,settings:publicSettings})});const j=await r.json();if(!j.ok)throw new Error(j.error||"Settings sync failed");toast("Restaurant settings saved online")}catch(e){console.error(e);toast("Settings saved locally, but online save failed")}}else toast("Restaurant settings saved")
 }
 function exportData(){let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="maison-restaurant-backup-"+key()+".json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast("Backup exported")}
