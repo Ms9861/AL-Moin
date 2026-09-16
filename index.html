@@ -76,7 +76,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;background:rad
 const STORE="MAISON_RESTAURANT_OS_V3";
 const DEFAULT={
  password:"1234",
- settings:{name:"MAISON",tagline:"Fine Dining • Crafted With Care",whatsapp:"",currency:"₹",notice:"Welcome. Freshly prepared to order.",gstin:"",address:"",phone:"",email:"",gstRate:5,logo:"",upiId:"",upiName:"",paymentNote:"Thank you for your order! Please complete payment using UPI.",whatsappApiUrl:"",autoSendInvoice:false,apiUrl:"",apiPublicKey:"",apiKey:""},
+ settings:{name:"MAISON",tagline:"Fine Dining • Crafted With Care",whatsapp:"",currency:"₹",notice:"Welcome. Freshly prepared to order.",gstin:"",address:"",phone:"",email:"",gstRate:5,logo:"",upiId:"",upiName:"",paymentNote:"Thank you for your order! Please complete payment using UPI.",whatsappApiUrl:"",autoSendInvoice:false,apiUrl:"https://script.google.com/macros/s/AKfycbwXy21xUF-M3pCJWnK93v2DoHOUCDJoBAhWE4yXnZOaX73FQu8GHLK2yLuA7nzs41Qp/exec",apiPublicKey:"ALMOIN_PUBLIC_2026",apiKey:""},
  menu:[
  {id:"M1",name:"Paneer Tikka",category:"Starters",price:180,cost:70,prep:15,description:"Char-grilled cottage cheese, herbs",image:"https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=900&q=80",available:true},
  {id:"M2",name:"Veg Biryani",category:"Main Course",price:220,cost:85,prep:20,description:"Aromatic basmati rice & vegetables",image:"https://images.unsplash.com/photo-1563379091339-03246963d29c?auto=format&fit=crop&w=900&q=80",available:true},
@@ -124,9 +124,15 @@ function renderCustomer(){
 function addCart(id){let m=data.menu.find(x=>x.id===id);if(!m||m.available===false)return;let c=cart.find(x=>x.id===id);c?c.qty++:cart.push({id,qty:1});renderCart();toast(m.name+" added")}
 function changeCart(id,n){let c=cart.find(x=>x.id===id);if(!c)return;c.qty+=n;if(c.qty<1)cart=cart.filter(x=>x.id!==id);renderCart()}
 function renderCart(){let total=cart.reduce((s,c)=>{let m=data.menu.find(x=>x.id===c.id);return s+(m?m.price*c.qty:0)},0);$("cartTotal").textContent=cur(total);$("placeTotal").textContent=cur(total);$("cartCount").textContent=cart.reduce((s,x)=>s+x.qty,0)+" items";$("cartItems").innerHTML=cart.map(c=>{let m=data.menu.find(x=>x.id===c.id);return `<div class="cartitem"><span>${esc(m?.name||"Item")} × ${c.qty}<br><small class="muted">${cur((m?.price||0)*c.qty)}</small></span><span class="q"><button onclick="changeCart('${c.id}',-1)">−</button> <button onclick="changeCart('${c.id}',1)">+</button></span></div>`}).join("")||"<div class='muted' style='padding:12px 0'>Your order is empty.</div>"}
+const ONLINE_API_URL="https://script.google.com/macros/s/AKfycbwXy21xUF-M3pCJWnK93v2DoHOUCDJoBAhWE4yXnZOaX73FQu8GHLK2yLuA7nzs41Qp/exec";
+const ONLINE_PUBLIC_KEY="ALMOIN_PUBLIC_2026";
 function onlineConfig(){
  const q=new URLSearchParams(location.search);
- return {apiUrl:(q.get("api")||data.settings.apiUrl||"").trim(),publicKey:(q.get("pk")||data.settings.apiPublicKey||"").trim(),adminKey:(data.settings.apiKey||"").trim()};
+ return {
+   apiUrl:(q.get("api")||data.settings.apiUrl||ONLINE_API_URL||"").trim(),
+   publicKey:(q.get("pk")||data.settings.apiPublicKey||ONLINE_PUBLIC_KEY||"").trim(),
+   adminKey:(data.settings.apiKey||"").trim()
+ };
 }
 async function placeOrder(){
  if(!cart.length)return alert("Please add at least one dish.");
@@ -163,7 +169,15 @@ function jsonpRequest(url,timeoutMs=15000){
 function serverUrl(cfg,params){return cfg.apiUrl+(cfg.apiUrl.includes("?")?"&":"?")+Object.entries(params).map(([k,v])=>encodeURIComponent(k)+"="+encodeURIComponent(v==null?"":String(v))).join("&")}
 async function syncOrderToServer(order,cfg=onlineConfig()){
  if(!cfg.apiUrl||!cfg.publicKey){toast("Online order sync is not configured.");return false}
- try{const j=await jsonpRequest(serverUrl(cfg,{action:"order",publicKey:cfg.publicKey,payload:JSON.stringify(order)}),20000);if(!j||!j.ok)throw new Error((j&&j.error)||"Server rejected the order");order.syncedAt=new Date().toISOString();save();toast("✓ Order received by restaurant server");return true}catch(e){console.error(e);toast("❌ Order was saved on this phone but NOT synced: "+e.message);return false}
+ let lastError=null;
+ for(let attempt=1;attempt<=3;attempt++){
+  try{
+   const j=await jsonpRequest(serverUrl(cfg,{action:"order",publicKey:cfg.publicKey,payload:JSON.stringify(order)}),20000);
+   if(!j||!j.ok)throw new Error((j&&j.error)||"Server rejected the order");
+   order.syncedAt=new Date().toISOString();save();toast("✓ Order received by restaurant server");return true;
+  }catch(e){lastError=e;console.error("Order sync attempt "+attempt,e);if(attempt<3)await new Promise(r=>setTimeout(r,1200));}
+ }
+ toast("❌ Online sync failed after 3 attempts: "+(lastError?.message||"Unknown error"));return false
 }
 async function bootstrapOnlineData(){
  const cfg=onlineConfig();
@@ -175,7 +189,11 @@ async function bootstrapOnlineData(){
   if(Array.isArray(j.menu)&&j.menu.length){data.menu=j.menu;}
   if(j.settings&&typeof j.settings==="object"){
    const keep={...data.settings};
-   Object.assign(keep,j.settings); keep.apiUrl=data.settings.apiUrl||cfg.apiUrl; keep.apiPublicKey=data.settings.apiPublicKey||cfg.publicKey; keep.apiKey=data.settings.apiKey||"";
+   const savedAdminKey=data.settings.apiKey||"";
+   Object.assign(keep,j.settings||{});
+   keep.apiUrl=data.settings.apiUrl||cfg.apiUrl||ONLINE_API_URL;
+   keep.apiPublicKey=data.settings.apiPublicKey||cfg.publicKey||ONLINE_PUBLIC_KEY;
+   keep.apiKey=savedAdminKey;
    data.settings=keep;
   }
   save();renderCustomer();
