@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0c0c0b">
+<title>MAISON — Restaurant OS</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#f5f2eb;--panel:#fff;--ink:#11110f;--muted:#7b776e;--line:#e7e1d6;--gold:#b88a43;--gold2:#e5c17b;--green:#28785a;--red:#b64c4c;--blue:#5574a8;--dark:#10100f;--shadow:0 14px 40px rgba(20,18,12,.08);--r:16px}
+*{box-sizing:border-box}html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:14px Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 10% 0,#d8bc8314,transparent 30%),radial-gradient(circle at 90% 20%,#7d6a4310,transparent 25%);z-index:-1}
+.top{position:sticky;top:0;z-index:50;background:#0e0e0d;color:white;border-bottom:1px solid #34332f}.topin{max-width:1250px;margin:auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;align-items:center;gap:10px}.mark{width:38px;height:38px;border:1px solid #6e5936;border-radius:11px;display:grid;place-items:center;color:var(--gold2);font:20px Georgia}.brandname{font:23px Georgia;letter-spacing:2px;color:#ead29f}.topbtn{border:1px solid #4a4944;background:#232320;color:#fff;border-radius:10px;padding:9px 12px}
+.hero{color:#fff;background:radial-gradient(circle at 50% -20%,#604a2a 0,#242018 35%,#0e0e0d 72%);text-align:center;padding:55px 18px 58px}.hero .eyebrow{letter-spacing:4px;text-transform:uppercase;color:#d7bd88;font-size:11px}.hero h1{font:52px Georgia;margin:10px 0 7px}.hero p{color:#d2cec4;margin:0 auto 17px;font-size:16px}.clockpill{display:inline-flex;gap:8px;align-items:center;padding:9px 14px;border:1px solid #665536;background:#171510;border-radius:99px;color:#e4cf9e;font-size:12px}.wrap{max-width:1250px;margin:auto;padding:20px 16px 35px}.notice{background:#fff8e6;border:1px solid #ead7a6;border-radius:12px;padding:12px 14px;margin-bottom:16px}.filters{display:flex;gap:9px;overflow:auto;padding:2px 0 17px}.filters button{white-space:nowrap;padding:9px 15px;border:1px solid #d5d0c6;background:#fff;border-radius:99px}.filters .active{background:#111;color:#fff;border-color:#111}
+.menuGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}.dish{background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);position:relative}.dish.unavailable{opacity:.55}.dishpic{height:190px;width:100%;object-fit:cover;background:linear-gradient(135deg,#ddd8ca,#eee9df);display:block}.dishbody{padding:15px}.tag{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);font-weight:700}.dish h3{font:23px Georgia;margin:6px 0}.dishdesc{color:var(--muted);min-height:19px}.dishbottom{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px}.price{font-size:18px;font-weight:800}.add{border:0;background:#111;color:#fff;border-radius:9px;padding:10px 14px}.unavailable .add{background:#aaa}
+.cart{margin-top:20px;background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px}.carthead{display:flex;justify-content:space-between;align-items:center}.cartitem{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid #eee}.q button{border:0;background:#eee;border-radius:7px;padding:5px 9px}.checkout{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:13px}.checkout input,.checkout textarea{width:100%;padding:11px;border:1px solid #d9d4c9;border-radius:9px}.checkout textarea{grid-column:1/-1}.place{grid-column:1/-1;border:0;border-radius:10px;padding:13px;background:linear-gradient(135deg,#a87835,#d1a35e);color:white;font-weight:800}.footer{text-align:center;color:var(--muted);font-size:12px;padding:15px}
+
+.admin{min-height:100vh;background:#f2f0eb}.adminHead{position:sticky;top:0;z-index:60;background:#0e0e0d;color:#fff}.adminHeadIn{max-width:1250px;margin:auto;padding:12px 14px 0}.adminTopLine{display:flex;align-items:center;justify-content:space-between;gap:10px}.adminTitle{font:23px Georgia;color:#e7c37d}.lock{background:#252522;border:1px solid #4d4c47;color:#fff;border-radius:9px;padding:9px 12px}.nav{display:flex;gap:7px;overflow:auto;padding:10px 0 9px}.nav button{white-space:nowrap;border:1px solid #3c3b37;background:#20201d;color:#c8c5bd;border-radius:8px;padding:8px 11px}.nav button.active{background:#dfb66d;border-color:#dfb66d;color:#111}
+.adminMain{max-width:1250px;margin:auto;padding:18px 14px 40px}.dateHeader{display:flex;justify-content:space-between;align-items:flex-end;gap:15px;margin-bottom:15px}.dateHeader h1{font:32px Georgia;margin:0 0 3px}.dateHeader .date{text-align:right;color:var(--muted)}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px;box-shadow:var(--shadow)}.card small{color:var(--muted);letter-spacing:.5px}.card strong{display:block;font-size:27px;margin-top:7px}.card.profit{border-left:4px solid var(--green)}.card.sales{border-left:4px solid var(--gold)}.card.cost{border-left:4px solid var(--red)}
+.box{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);padding:15px;margin-top:15px}.bar{display:flex;justify-content:space-between;align-items:center;gap:9px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:4px}.bar b{font-size:16px}.btn{background:#fff;border:1px solid #c8c3b9;border-radius:8px;padding:9px 11px}.btn.dark{background:#111;color:#fff;border-color:#111}.btn.green{background:var(--green);color:#fff;border-color:var(--green)}.btn.red{color:var(--red)}.btn.gold{background:#ead09e;border-color:#d4b673}.tools{display:flex;flex-wrap:wrap;gap:8px}.search{padding:10px;border:1px solid #d8d3c9;border-radius:8px;min-width:210px}
+.order{display:grid;grid-template-columns:1.15fr 1.8fr 1fr 1.2fr;gap:15px;padding:15px 0;border-bottom:1px solid var(--line)}.order:last-child{border:0}.badge{display:inline-block;border-radius:99px;padding:5px 9px;font-size:11px;margin-top:5px}.bNew{background:#fff0c9}.bPreparing{background:#e8e2ff}.bReady{background:#dff2e7}.bCompleted{background:#e9e9e9}.bCancelled{background:#ffe0e0;color:#9b1c1c}.actions{display:flex;gap:6px;flex-wrap:wrap;align-content:start}
+.summaryGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.mini{background:#f7f5f0;border:1px solid var(--line);border-radius:11px;padding:12px}.mini span{display:block;color:var(--muted);font-size:12px}.mini b{display:block;font-size:20px;margin-top:4px}.ledger{width:100%;border-collapse:collapse}.ledger th,.ledger td{padding:10px 7px;border-bottom:1px solid #eee;text-align:left}.greenText{color:var(--green);font-weight:800}.redText{color:var(--red);font-weight:800}
+.menuRow{display:grid;grid-template-columns:1.4fr .9fr 85px 85px 85px 1.5fr auto;gap:7px;margin:8px 0}.menuRow input,.menuRow select{width:100%;padding:9px;border:1px solid #ddd7cc;border-radius:7px}.stockDot{font-size:11px;color:var(--muted)}
+.settingsGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.settingsGrid input,.settingsGrid textarea{width:100%;padding:11px;border:1px solid #d9d4c9;border-radius:9px}.settingsGrid textarea{grid-column:1/-1}.help{color:var(--muted);font-size:12px}
+.modal{position:fixed;inset:0;background:#000a;z-index:200;display:grid;place-items:center;padding:18px}.modalCard{background:#fff;border-radius:17px;width:min(420px,100%);padding:24px;box-shadow:0 25px 80px #0008}.modalCard h2{font:29px Georgia;margin:0 0 5px}.modalCard input{width:100%;padding:13px;border:1px solid #ccc;border-radius:9px;margin:12px 0}.err{height:20px;color:var(--red)}
+.toast{position:fixed;right:16px;bottom:16px;background:#121210;color:#fff;padding:12px 15px;border-radius:10px;z-index:300;box-shadow:0 10px 30px #0004}
+.receipt{max-width:430px;margin:auto;font-family:Arial}.receipt h2{font:28px Georgia;text-align:center}.receipt .rline{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #ccc}.printOnly{display:none}
+@media print{body>*:not(#printArea){display:none!important}.printOnly{display:block}.receipt{padding:15px}}
+@media(max-width:850px){.menuGrid{grid-template-columns:1fr 1fr}.cards{grid-template-columns:1fr 1fr}.order{display:block}.order>div{margin-bottom:10px}.menuRow{grid-template-columns:1fr 1fr}.menuRow input:nth-child(6){grid-column:1/-1}.menuRow button{grid-column:1/-1}.summaryGrid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.hero h1{font-size:37px}.menuGrid{grid-template-columns:1fr}.dishpic{height:200px}.checkout,.settingsGrid{grid-template-columns:1fr}.checkout textarea,.settingsGrid textarea{grid-column:auto}.dateHeader{align-items:flex-start}.dateHeader h1{font-size:26px}.dateHeader .date{font-size:11px}.cards{gap:8px}.card{padding:12px}.card strong{font-size:22px}.summaryGrid{grid-template-columns:1fr 1fr}.search{min-width:150px;width:100%}}
+.invoice{background:#fff;border:1px solid #ddd6c9;max-width:680px;margin:auto;padding:25px;color:#151512}.invHead{display:flex;justify-content:space-between;gap:18px;border-bottom:2px solid #171713;padding-bottom:16px}.invLogo{width:72px;height:72px;object-fit:contain;border-radius:12px;border:1px solid #e4dfd4;background:#f8f5ee}.invBrand{font:29px Georgia;margin:0}.invMuted{color:#706c63;font-size:12px;line-height:1.55}.invTitle{text-align:right}.invTitle h2{font:22px Georgia;margin:0 0 5px}.invMeta{display:grid;grid-template-columns:1fr 1fr;gap:4px 20px;margin:15px 0;font-size:12px}.invTable{width:100%;border-collapse:collapse}.invTable th,.invTable td{padding:9px 5px;border-bottom:1px solid #e7e2d9;text-align:left}.invTable th:last-child,.invTable td:last-child{text-align:right}.invTotals{margin-left:auto;width:min(330px,100%);margin-top:12px}.invRow{display:flex;justify-content:space-between;padding:5px 0}.invGrand{font-size:19px;font-weight:800;border-top:2px solid #171713;margin-top:4px;padding-top:8px}.invGst{background:#f7f4ed;border-radius:8px;padding:9px;margin-top:10px;font-size:12px}.invFoot{text-align:center;border-top:1px solid #e7e2d9;margin-top:18px;padding-top:13px;font-size:11px;color:#77736a}@media(max-width:600px){.invHead{flex-direction:column}.invTitle{text-align:left}.invoice{padding:16px}.invMeta{grid-template-columns:1fr}}</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<!-- CUSTOMER APP -->
+<div id="customerView">
+<header class="top"><div class="topin"><div class="brand"><div class="mark">M</div><div class="brandname" id="brandName">MAISON</div></div><button class="topbtn" onclick="openAdmin()">🔒 Admin</button></div></header>
+<section class="hero"><div class="eyebrow">EST. • PREMIUM DINING</div><h1 id="heroName">MAISON</h1><p id="heroTagline">Fine Dining • Crafted With Care</p><div class="clockpill">● <span id="customerClock"></span></div><div id="tableText" style="color:#ddc797;margin-top:10px"></div></section>
+<main class="wrap"><div id="notice" class="notice hidden"></div><div class="filters" id="categories"></div><div class="menuGrid" id="menuGrid"></div>
+<section class="cart"><div class="carthead"><b>YOUR ORDER</b><span class="muted" id="cartCount">0 items</span></div><div id="cartItems"></div><div style="display:flex;justify-content:space-between;font-size:19px;margin-top:12px"><b>Total</b><b id="cartTotal">₹0</b></div>
+<div class="checkout"><input id="cName" placeholder="Guest name"><input id="cPhone" placeholder="Phone number"><input id="cTable" placeholder="Table number"><select id="cPayment" style="width:100%;padding:11px;border:1px solid #d9d4c9;border-radius:9px"><option value="UPI">Pay by UPI • QR / Payment Link</option><option value="CASH">Pay at Counter</option></select><textarea id="cNotes" placeholder="Special instructions"></textarea><button class="place" onclick="placeOrder()">Place Order • <span id="placeTotal">₹0</span></button></div></section>
+<div class="footer">Today is <span id="customerDate"></span> • <span id="customerFooterTime"></span></div></main></div>
+
+<!-- ADMIN APP -->
+<div id="adminView" class="hidden admin">
+<header class="adminHead"><div class="adminHeadIn"><div class="adminTopLine"><div class="adminTitle">MAISON • Restaurant OS</div><button class="lock" onclick="logout()">🔒 Lock</button></div>
+<nav class="nav" id="adminNav"><button class="active" onclick="tab('dashboard',this)">⌂ Dashboard</button><button onclick="tab('orders',this)">▣ Orders</button><button onclick="tab('accounting',this)">₹ Accounting</button><button onclick="tab('menu',this)">☷ Menu</button><button onclick="tab('settings',this)">⚙ Settings</button></nav></div></header>
+<main class="adminMain">
+
+<section id="dashboard">
+<div class="dateHeader"><div><h1>Good day, Manager</h1><div class="muted">Your business snapshot</div></div><div class="date"><b id="adminDate"></b><br><span id="adminClock"></span></div></div>
+<div class="cards"><div class="card sales"><small>SALES TODAY</small><strong id="dSales">₹0</strong></div><div class="card cost"><small>FOOD COST</small><strong id="dCost">₹0</strong></div><div class="card profit"><small>NET PROFIT</small><strong id="dProfit">₹0</strong></div><div class="card"><small>ORDERS TODAY</small><strong id="dOrders">0</strong></div></div>
+<div class="box"><div class="bar"><b>Live Operations</b><button class="btn" onclick="renderAdmin()">↻ Refresh</button></div><div class="summaryGrid"><div class="mini"><span>New Orders</span><b id="dNew">0</b></div><div class="mini"><span>Preparing</span><b id="dPrep">0</b></div><div class="mini"><span>Ready</span><b id="dReady">0</b></div><div class="mini"><span>Expenses</span><b id="dExp">₹0</b></div><div class="mini"><span>Average Order</span><b id="dAvg">₹0</b></div><div class="mini"><span>Items Sold</span><b id="dItems">0</b></div></div></div>
+<div class="box"><div class="bar"><b>Quick Actions</b></div><div class="tools"><button class="btn dark" onclick="tabById('menu')">+ Add Dish</button><button class="btn gold" onclick="tabById('accounting');setTimeout(addExpense,50)">+ Add Expense</button><button class="btn" onclick="tabById('orders')">View Orders</button><button class="btn" onclick="exportData()">Backup Data</button></div></div>
+</section>
+
+<section id="orders" class="hidden"><div class="box"><div class="bar"><b>Orders</b><div class="tools"><input class="search" id="orderSearch" oninput="renderOrders()" placeholder="Search order / customer"><button class="btn" onclick="renderOrders()">↻</button></div></div><div id="ordersList"></div></div></section>
+
+<section id="accounting" class="hidden"><div class="box"><div class="bar"><b>Accounting & Profit</b><div class="tools"><input id="accountDate" type="date" onchange="renderAccounting()"><button class="btn dark" onclick="addExpense()">+ Expense</button></div></div><div id="accountCards" class="summaryGrid"></div></div>
+<div class="box"><div class="bar"><b>Expense Ledger</b></div><table class="ledger"><thead><tr><th>Date</th><th>Time</th><th>Description</th><th>Amount</th><th></th></tr></thead><tbody id="expenseList"></tbody></table></div>
+<div class="box"><div class="bar"><b>Sales for Selected Date</b></div><table class="ledger"><thead><tr><th>Time</th><th>Order</th><th>Guest</th><th>Sales</th><th>Food Cost</th><th>Profit</th></tr></thead><tbody id="salesLedger"></tbody></table></div></section>
+
+<section id="menu" class="hidden"><div class="box"><div class="bar"><b>Menu Manager</b><div class="tools"><input class="search" id="menuSearch" oninput="renderMenuAdmin()" placeholder="Search dishes"><button class="btn dark" onclick="addDish()">+ Add Dish</button><button class="btn gold" onclick="saveMenu()">Save All</button></div></div><p class="help">Sale = customer price. Cost = your ingredient/buying cost. Profit uses Sale − Cost − expenses. Toggle availability to hide a dish from customers.</p><div id="menuEditor"></div></div></section>
+
+<section id="settings" class="hidden"><div class="box"><div class="bar"><b>Restaurant Profile</b><button class="btn dark" onclick="saveSettings()">Save</button></div><div class="settingsGrid"><input id="sName" placeholder="Restaurant name"><input id="sTagline" placeholder="Tagline"><input id="sWhatsApp" placeholder="Restaurant WhatsApp"><input id="sPhone" placeholder="Restaurant phone"><input id="sEmail" placeholder="Restaurant email"><input id="sCurrency" placeholder="Currency symbol"><input id="sGSTIN" placeholder="GSTIN (optional)"><input id="sGSTRate" type="number" min="0" max="100" step="0.1" placeholder="GST %"><input id="sLogo" placeholder="Logo URL (https://...)"><input id="sUpiId" placeholder="Restaurant UPI ID (example@upi)"><input id="sApiUrl" placeholder="Google Apps Script Web App URL (orders sync)"><input id="sApiPublicKey" placeholder="Public order key (customer phones)"><input id="sApiKey" placeholder="Admin sync key (admin only)"><input id="sWhatsappApi" placeholder="WhatsApp PDF API URL (optional)"><label style="display:flex;align-items:center;gap:8px;padding:10px;border:1px solid #d9d4c9;border-radius:9px"><input id="sAutoInvoice" type="checkbox" style="width:auto"> Auto-send invoice PDF via WhatsApp API</label><input id="sUpiName" placeholder="UPI account name"><input id="sPaymentNote" placeholder="Payment message"><textarea id="sAddress" placeholder="Full restaurant address"></textarea><textarea id="sNotice" placeholder="Customer notice"></textarea></div><p class="help"><b>Online Orders:</b> To receive customer orders on another phone/computer, connect the Google Apps Script Web App URL. Customer phones send orders to the shared online sheet; the Admin panel refreshes automatically. Keep the Admin sync key private.<br><br><b>Payments:</b> Enter the restaurant UPI ID above. Customers can scan the QR or tap Pay Now after placing an order. This is direct UPI intent/QR collection; automatic bank-payment verification requires a payment gateway or server integration.</p><p class="help">For true automatic PDF delivery, configure a secure WhatsApp Business/Cloud API backend endpoint below. Browser-only WhatsApp links cannot automatically attach a PDF. On Android/iPhone, <b>Send PDF</b> can share the actual PDF directly when the browser supports file sharing. On desktop WhatsApp Web, the browser cannot silently attach a local PDF; it downloads the PDF and opens WhatsApp so you can attach it.</p><p class="help">Set your applicable GST rate and GSTIN. Invoice shows CGST + SGST for an intra-state sale. Confirm the tax treatment applicable to your restaurant.</p></div>
+<div class="box"><div class="bar"><b>Security</b><button class="btn dark" onclick="changePin()">Change PIN</button></div><p class="help">Admin is protected by a PIN. Lock it after use. Default first-use PIN is <b>1234</b>.</p></div>
+<div class="box"><div class="bar"><b>Backup & Data</b><div class="tools"><button class="btn" onclick="exportData()">Export JSON</button><button class="btn" onclick="$('importFile').click()">Import JSON</button><button class="btn red" onclick="resetData()">Reset Demo Data</button><input id="importFile" class="hidden" type="file" accept=".json" onchange="importData(this)"></div></div><p class="help">Export before moving to another phone. This single-file version stores data in the current browser/device.</p></div></section>
+</main></div>
+
+<div id="loginModal" class="modal hidden"><div class="modalCard"><h2>Admin Locked</h2><p class="muted">Enter your private Admin PIN to open Restaurant OS.</p><input id="pin" type="password" inputmode="numeric" placeholder="Admin PIN" onkeydown="if(event.key==='Enter')login()"><div class="err" id="pinErr"></div><button class="btn dark" style="width:100%;padding:12px" onclick="login()">Unlock Dashboard</button><p class="help">First-time PIN: <b>1234</b>. Change it from Settings.</p></div></div>
+<div id="paymentModal" class="modal hidden"><div class="modalCard" style="text-align:center;width:min(430px,100%)"><div style="font-size:38px">💳</div><h2>Complete Payment</h2><p id="paymentOrderText" class="muted"></p><div id="paymentQr" style="display:flex;justify-content:center;margin:15px 0"></div><div style="font-weight:800;font-size:22px;margin:8px 0" id="paymentAmount"></div><p id="paymentNote" class="muted" style="line-height:1.5"></p><div class="tools" style="justify-content:center"><button class="btn gold" onclick="openUpiPayment()">📲 Pay Now</button><button class="btn" onclick="copyUpiPayment()">Copy UPI</button></div><button class="btn dark" style="width:100%;margin-top:12px" onclick="closePayment()">Done</button></div></div><div id="invoiceModal" class="modal hidden" onclick="if(event.target===this)closeInvoice()"><div class="modalCard" style="width:min(760px,100%);max-height:92vh;overflow:auto;padding:0"><div style="padding:12px 15px;border-bottom:1px solid #e5e0d7;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:2"><b>Tax Invoice Preview</b><div class="tools"><button class="btn" onclick="downloadInvoicePDF()">⬇ PDF</button><button class="btn gold" onclick="shareInvoicePDF()">📤 Send PDF</button><button class="btn" onclick="printInvoice()">🖨 Print</button><button class="btn dark" onclick="closeInvoice()">Close</button></div></div><div id="invoiceContent" style="padding:18px"></div></div></div><div id="toast" class="toast hidden"></div><div id="successModal" class="modal hidden"><div class="modalCard" style="text-align:center"><div style="font-size:46px">✓</div><h2 style="color:#3b7d4a">Order Placed Successfully!</h2><p id="successText" class="muted" style="line-height:1.6"></p><div style="background:#fff8e6;border:1px solid #ead7a6;border-radius:12px;padding:12px;margin:14px 0;font-size:13px;line-height:1.5"><b>Thank you for choosing us ❤️</b><br>Enjoyed your meal? We’d love to serve you again. Ask our team about today’s specials and add-ons!</div><button class="btn dark" style="width:100%" onclick="closeSuccess()">Continue</button></div></div>
+<div id="printArea" class="printOnly"></div>
+
+<script>
+const STORE="MAISON_RESTAURANT_OS_V3";
+const DEFAULT={
+ password:"1234",
+ settings:{name:"MAISON",tagline:"Fine Dining • Crafted With Care",whatsapp:"",currency:"₹",notice:"Welcome. Freshly prepared to order.",gstin:"",address:"",phone:"",email:"",gstRate:5,logo:"",upiId:"",upiName:"",paymentNote:"Thank you for your order! Please complete payment using UPI.",whatsappApiUrl:"",autoSendInvoice:false,apiUrl:"",apiPublicKey:"",apiKey:""},
+ menu:[
+ {id:"M1",name:"Paneer Tikka",category:"Starters",price:180,cost:70,prep:15,description:"Char-grilled cottage cheese, herbs",image:"https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=900&q=80",available:true},
+ {id:"M2",name:"Veg Biryani",category:"Main Course",price:220,cost:85,prep:20,description:"Aromatic basmati rice & vegetables",image:"https://images.unsplash.com/photo-1563379091339-03246963d29c?auto=format&fit=crop&w=900&q=80",available:true},
+ {id:"M3",name:"Butter Naan",category:"Breads",price:55,cost:18,prep:8,description:"Tandoor baked, brushed with butter",image:"https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=80",available:true},
+ {id:"M4",name:"Gulab Jamun",category:"Desserts",price:95,cost:25,prep:5,description:"Warm syrup-soaked milk dumplings",image:"https://images.unsplash.com/photo-1601303516534-6c2b2c1f3e2a?auto=format&fit=crop&w=900&q=80",available:true}
+ ],
+ orders:[],expenses:[]
+};
+let data=load(),cart=[],cat="All",unlocked=false;
+
+function $(x){return document.getElementById(x)}
+function load(){try{let x=JSON.parse(localStorage.getItem(STORE));return x&&x.menu&&x.settings?x:structuredClone(DEFAULT)}catch(e){return structuredClone(DEFAULT)}}
+function save(){localStorage.setItem(STORE,JSON.stringify(data))}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function cur(n){return (data.settings.currency||"₹")+Math.round(Number(n)||0)}
+function key(v=new Date()){let d=v instanceof Date?v:new Date(v);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function dateLong(v=new Date()){return new Date(v).toLocaleDateString("en-IN",{weekday:"long",day:"2-digit",month:"long",year:"numeric"})}
+function timeLong(v=new Date()){return new Date(v).toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",second:"2-digit"})}
+function toast(s){$("toast").textContent=s;$("toast").classList.remove("hidden");clearTimeout(window.toastT);window.toastT=setTimeout(()=>$("toast").classList.add("hidden"),2300)}
+function tick(){let d=new Date(),t=dateLong(d),tm=timeLong(d);$("customerClock").textContent=t+" • "+tm;$("customerDate").textContent=t;$("customerFooterTime").textContent=tm;if(unlocked){$("adminDate").textContent=t;$("adminClock").textContent=tm}}setInterval(tick,1000);tick();
+
+function openAdmin(){if(unlocked){showAdmin();return}$("loginModal").classList.remove("hidden");$("pin").value="";$("pinErr").textContent="";setTimeout(()=>$("pin").focus(),80)}
+function login(){if($("pin").value===String(data.password)){unlocked=true;$("loginModal").classList.add("hidden");showAdmin();toast("Admin unlocked")}else $("pinErr").textContent="Incorrect PIN"}
+function showAdmin(){$("customerView").classList.add("hidden");$("adminView").classList.remove("hidden");renderAdmin();syncOrdersFromServer(false);startOrderPolling()}
+function logout(){unlocked=false;$("adminView").classList.add("hidden");$("customerView").classList.remove("hidden");renderCustomer();toast("Admin locked")}
+function changePin(){let p=prompt("Enter a new PIN (4+ digits):");if(p===null)return;if(!/^\d{4,}$/.test(p))return alert("PIN must be at least 4 digits.");data.password=p;save();toast("PIN changed")}
+function tab(id,btn){["dashboard","orders","accounting","menu","settings"].forEach(x=>$(x).classList.add("hidden"));$(id).classList.remove("hidden");document.querySelectorAll("#adminNav button").forEach(b=>b.classList.remove("active"));if(btn)btn.classList.add("active");if(id==="orders")renderOrders();if(id==="accounting")renderAccounting();if(id==="menu")renderMenuAdmin()}
+function tabById(id){let btn=[...document.querySelectorAll("#adminNav button")].find(b=>b.textContent.toLowerCase().includes(id==="accounting"?"account":id));tab(id,btn)}
+
+function renderCustomer(){
+ $("brandName").textContent=data.settings.name||"MAISON";$("heroName").textContent=data.settings.name||"MAISON";$("heroTagline").textContent=data.settings.tagline||"";
+ if(data.settings.notice){$("notice").textContent=data.settings.notice;$("notice").classList.remove("hidden")}else $("notice").classList.add("hidden");
+ let table=new URLSearchParams(location.search).get("table");if(table){$("cTable").value=table;$("tableText").textContent="TABLE "+table}else $("tableText").textContent="";
+ let cats=["All",...new Set(data.menu.map(x=>x.category).filter(Boolean))];$("categories").innerHTML=cats.map(c=>`<button class="${c===cat?"active":""}" onclick="cat='${esc(c)}';renderCustomer()">${esc(c)}</button>`).join("");
+ let list=(cat==="All"?data.menu:data.menu.filter(x=>x.category===cat));
+ $("menuGrid").innerHTML=list.map(x=>`<article class="dish ${x.available===false?"unavailable":""}"><img class="dishpic" src="${esc(x.image||"")}" onerror="this.style.visibility='hidden'"><div class="dishbody"><div class="tag">${esc(x.category||"Special")}</div><h3>${esc(x.name)}</h3><div class="dishdesc">${esc(x.description||"")}</div><div class="dishbottom"><span class="price">${cur(x.price)}</span>${x.available===false?'<button class="add" disabled>Unavailable</button>':`<button class="add" onclick="addCart('${esc(x.id)}')">Add +</button>`}</div></div></article>`).join("")||"<p>No dishes in this category.</p>";
+ renderCart()
+}
+function addCart(id){let m=data.menu.find(x=>x.id===id);if(!m||m.available===false)return;let c=cart.find(x=>x.id===id);c?c.qty++:cart.push({id,qty:1});renderCart();toast(m.name+" added")}
+function changeCart(id,n){let c=cart.find(x=>x.id===id);if(!c)return;c.qty+=n;if(c.qty<1)cart=cart.filter(x=>x.id!==id);renderCart()}
+function renderCart(){let total=cart.reduce((s,c)=>{let m=data.menu.find(x=>x.id===c.id);return s+(m?m.price*c.qty:0)},0);$("cartTotal").textContent=cur(total);$("placeTotal").textContent=cur(total);$("cartCount").textContent=cart.reduce((s,x)=>s+x.qty,0)+" items";$("cartItems").innerHTML=cart.map(c=>{let m=data.menu.find(x=>x.id===c.id);return `<div class="cartitem"><span>${esc(m?.name||"Item")} × ${c.qty}<br><small class="muted">${cur((m?.price||0)*c.qty)}</small></span><span class="q"><button onclick="changeCart('${c.id}',-1)">−</button> <button onclick="changeCart('${c.id}',1)">+</button></span></div>`}).join("")||"<div class='muted' style='padding:12px 0'>Your order is empty.</div>"}
+function onlineConfig(){
+ const q=new URLSearchParams(location.search);
+ return {apiUrl:(q.get("api")||data.settings.apiUrl||"").trim(),publicKey:(q.get("pk")||data.settings.apiPublicKey||"").trim(),adminKey:(data.settings.apiKey||"").trim()};
+}
+async function placeOrder(){
+ if(!cart.length)return alert("Please add at least one dish.");
+ const name=$("cName").value.trim(), phone=$("cPhone").value.trim();
+ if(!name||!phone)return alert("Please enter guest name and phone.");
+ let now=new Date();
+ let items=cart.map(c=>{let m=data.menu.find(x=>x.id===c.id);return{id:m.id,name:m.name,qty:c.qty,price:Number(m.price)||0,cost:Number(m.cost)||0}});
+ let total=items.reduce((s,x)=>s+x.price*x.qty,0),cost=items.reduce((s,x)=>s+x.cost*x.qty,0),prep=items.reduce((s,x)=>Math.max(s,(data.menu.find(m=>m.id===x.id)?.prep||0)),0);
+ let id="ORD-"+now.getTime().toString().slice(-8);
+ let order={id,createdAt:now.toISOString(),customer:name,phone,table:$("cTable").value.trim(),notes:$("cNotes").value.trim(),items,total,cost,prep,status:"New",paymentMethod:$("cPayment").value,paymentStatus:$("cPayment").value==="CASH"?"Pay at Counter":"Pending"};
+ data.orders.unshift(order);save();cart=[];renderCart();showSuccess(order);
+ const cfg=onlineConfig();
+ let synced=false;
+ if(cfg.apiUrl&&cfg.publicKey) synced=await syncOrderToServer(order,cfg);
+ if(!synced&&data.settings.whatsapp){let p=data.settings.whatsapp.replace(/\D/g,"");if(p)window.open("https://wa.me/"+p+"?text="+encodeURIComponent("NEW ORDER "+id+"\nGuest: "+order.customer+"\nTable: "+order.table+"\nTotal: "+cur(total)),"_blank")}
+ if(order.paymentMethod==="UPI")setTimeout(()=>showPayment(order),250);
+ if(data.settings.autoSendInvoice&&data.settings.whatsappApiUrl)setTimeout(()=>{showInvoice(order.id);autoSendInvoicePDF(order.id)},500);
+}
+function jsonpRequest(url,timeoutMs=15000){
+ return new Promise((resolve,reject)=>{
+  const cb="__aljsonp_"+Date.now()+"_"+Math.random().toString(36).slice(2),script=document.createElement("script"); let done=false;
+  const timer=setTimeout(()=>finish(new Error("Server timeout — check the /exec URL and deployment access.")),timeoutMs);
+  function cleanup(){clearTimeout(timer);try{delete window[cb]}catch(_){window[cb]=undefined}script.remove()}
+  function finish(err,val){if(done)return;done=true;cleanup();err?reject(err):resolve(val)}
+  window[cb]=val=>finish(null,val);script.onerror=()=>finish(new Error("Could not reach the Google Apps Script server."));
+  script.src=url+(url.includes("?")?"&":"?")+"callback="+encodeURIComponent(cb)+"&_="+Date.now();document.head.appendChild(script);
+ });
+}
+function serverUrl(cfg,params){return cfg.apiUrl+(cfg.apiUrl.includes("?")?"&":"?")+Object.entries(params).map(([k,v])=>encodeURIComponent(k)+"="+encodeURIComponent(v==null?"":String(v))).join("&")}
+async function syncOrderToServer(order,cfg=onlineConfig()){
+ if(!cfg.apiUrl||!cfg.publicKey){toast("Online order sync is not configured.");return false}
+ try{const j=await jsonpRequest(serverUrl(cfg,{action:"order",publicKey:cfg.publicKey,payload:JSON.stringify(order)}),20000);if(!j||!j.ok)throw new Error((j&&j.error)||"Server rejected the order");order.syncedAt=new Date().toISOString();save();toast("✓ Order received by restaurant server");return true}catch(e){console.error(e);toast("❌ Order was saved on this phone but NOT synced: "+e.message);return false}
+}
+async function bootstrapOnlineData(){
+ const cfg=onlineConfig();
+ if(!cfg.apiUrl||!cfg.publicKey)return;
+ try{
+  const u=cfg.apiUrl+(cfg.apiUrl.includes("?")?"&":"?")+"action=menu&publicKey="+encodeURIComponent(cfg.publicKey);
+  const r=await fetch(u,{cache:"no-store"}); const j=await r.json();
+  if(!j.ok)throw new Error(j.error||"Could not load online menu");
+  if(Array.isArray(j.menu)&&j.menu.length){data.menu=j.menu;}
+  if(j.settings&&typeof j.settings==="object"){
+   const keep={...data.settings};
+   Object.assign(keep,j.settings); keep.apiUrl=data.settings.apiUrl||cfg.apiUrl; keep.apiPublicKey=data.settings.apiPublicKey||cfg.publicKey; keep.apiKey=data.settings.apiKey||"";
+   data.settings=keep;
+  }
+  save();renderCustomer();
+ }catch(e){console.error(e);toast("Using local menu — online menu is not available.");}
+}
+function showSuccess(o){$('successText').innerHTML="Order <b>"+esc(o.id)+"</b> has been received.<br>Estimated preparation: <b>"+o.prep+" minutes</b>.<br>Payment: <b>"+esc(o.paymentStatus)+"</b>.";$('successModal').classList.remove('hidden')}
+function closeSuccess(){$('successModal').classList.add('hidden')}
+function paymentTotal(o){let c=invoiceCalc(o);return Number(c.grand)||Number(o.total)||0}
+function upiUrl(o){let amount=paymentTotal(o).toFixed(2),id=String(data.settings.upiId||"").trim(),name=String(data.settings.upiName||data.settings.name||"Restaurant").trim();if(!id)return "";return "upi://pay?pa="+encodeURIComponent(id)+"&pn="+encodeURIComponent(name)+"&am="+encodeURIComponent(amount)+"&cu=INR&tn="+encodeURIComponent("Order "+o.id)}
+function showPayment(o){let url=upiUrl(o);$('paymentOrderText').textContent=o.id+" • "+o.customer;$('paymentAmount').textContent="Pay "+cur(paymentTotal(o));$('paymentNote').textContent=data.settings.paymentNote||"Scan the QR or tap Pay Now to complete your UPI payment.";$('paymentQr').innerHTML="";if(url&&window.QRCode)new QRCode($('paymentQr'),{text:url,width:210,height:210,correctLevel:QRCode.CorrectLevel.M});else $('paymentQr').innerHTML='<div style="background:#fff1f1;border:1px solid #e2b7b7;padding:12px;border-radius:10px;color:#9b1c1c">Restaurant UPI ID is not configured. Add it in Admin → Settings.</div>';window.currentPaymentOrder=o.id;window.currentUpiUrl=url;$('paymentModal').classList.remove('hidden')}
+function closePayment(){$('paymentModal').classList.add('hidden')}
+function openUpiPayment(){if(!window.currentUpiUrl)return alert("Restaurant UPI ID is not configured in Admin → Settings.");window.location.href=window.currentUpiUrl}
+async function copyUpiPayment(){let id=data.settings.upiId||"";if(!id)return alert("Restaurant UPI ID is not configured.");try{await navigator.clipboard.writeText(id);toast("UPI ID copied: "+id)}catch(e){prompt("Copy UPI ID",id)}}
+async function markPayment(id,status){let o=data.orders.find(x=>x.id===id);if(!o)return;o.paymentStatus=status;save();renderOrders();toast("Payment marked as "+status);await pushOrderUpdate(o)}
+async function pushOrderUpdate(o){const cfg=onlineConfig();if(!cfg.apiUrl||!cfg.adminKey)return false;try{const j=await jsonpRequest(serverUrl(cfg,{action:"updateStatus",key:cfg.adminKey,payload:JSON.stringify({id:o.id,status:o.status,paymentStatus:o.paymentStatus,cancelledAt:o.cancelledAt||""})}),15000);if(!j||!j.ok)throw new Error((j&&j.error)||"Update rejected");return true}catch(e){console.error(e);toast("Order updated locally, but server update failed: "+e.message);return false}}
+function dayStats(k){let os=data.orders.filter(o=>key(o.createdAt)===k&&o.status!=="Cancelled"),ex=data.expenses.filter(e=>e.date===k);let sales=os.reduce((s,o)=>s+Number(o.total||0),0),cost=os.reduce((s,o)=>s+Number(o.cost||0),0),expense=ex.reduce((s,e)=>s+Number(e.amount||0),0),items=os.reduce((s,o)=>s+(o.items||[]).reduce((a,i)=>a+i.qty,0),0);return{os,sales,cost,expense,profit:sales-cost-expense,items}}
+let remoteTimer=null;
+async function syncOrdersFromServer(showMsg=false){
+ if(!unlocked)return false;const cfg=onlineConfig();if(!cfg.apiUrl||!cfg.adminKey){updateOnlineStatus("Missing Web App URL or Admin key");return false}
+ try{const j=await jsonpRequest(serverUrl(cfg,{action:"orders",key:cfg.adminKey}),15000);if(!j||!j.ok)throw new Error((j&&j.error)||"Could not load orders");const incoming=Array.isArray(j.orders)?j.orders:[],beforeIds=new Set(data.orders.map(o=>o.id)),map=new Map(data.orders.map(o=>[o.id,o]));incoming.forEach(o=>map.set(o.id,o));const added=incoming.filter(o=>!beforeIds.has(o.id));data.orders=[...map.values()].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));save();renderOrders();renderAdmin();updateOnlineStatus("CONNECTED ✓ • "+incoming.length+" online orders");if(added.length)notifyNewOrder(added.length);if(showMsg)toast("Orders refreshed from server");return true}catch(e){console.error(e);updateOnlineStatus("OFFLINE ✕ • "+e.message);if(showMsg)toast("Could not refresh online orders: "+e.message);return false}
+}
+function notifyNewOrder(n){
+ try{if(window.AudioContext||window.webkitAudioContext){let A=window.AudioContext||window.webkitAudioContext,c=new A();let o=c.createOscillator(),g=c.createGain();o.frequency.value=880;g.gain.value=.06;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.18);setTimeout(()=>{let o2=c.createOscillator();o2.frequency.value=1175;o2.connect(g);o2.start();o2.stop(c.currentTime+.18)},220)}}catch(e){}
+ toast(n+" new order"+(n>1?"s":"")+" received");
+}
+function startOrderPolling(){clearInterval(remoteTimer);remoteTimer=setInterval(()=>syncOrdersFromServer(false),4000)}
+startOrderPolling();
+
+function renderAdmin(){let a=dayStats(key());$("dSales").textContent=cur(a.sales);$("dCost").textContent=cur(a.cost);$("dProfit").textContent=cur(a.profit);$("dOrders").textContent=a.os.length;$("dNew").textContent=a.os.filter(o=>o.status==="New").length;$("dPrep").textContent=a.os.filter(o=>o.status==="Preparing").length;$("dReady").textContent=a.os.filter(o=>o.status==="Ready").length;$("dExp").textContent=cur(a.expense);$("dAvg").textContent=cur(a.os.length?a.sales/a.os.length:0);$("dItems").textContent=a.items;fillSettings();renderOrders();renderMenuAdmin()}
+function renderOrders(){let q=($("orderSearch")?.value||"").toLowerCase(),os=data.orders.filter(o=>(o.id+" "+o.customer+" "+o.phone+" "+o.table).toLowerCase().includes(q));$("ordersList").innerHTML=os.map(o=>`<article class="order"><div><b>${esc(o.id)}</b><br>${esc(o.customer)}<br>📞 ${esc(o.phone)}<br>Table ${esc(o.table||"—")}<br><span class="badge ${o.status==="New"?"bNew":o.status==="Preparing"?"bPreparing":o.status==="Ready"?"bReady":o.status==="Cancelled"?"bCancelled":"bCompleted"}">${o.status}</span></div><div>${o.items.map(i=>esc(i.name)+" × "+i.qty).join("<br>")}<div class="muted">${esc(o.notes||"")}</div></div><div><b>${cur(o.total)}</b><br>Food cost ${cur(o.cost)}<br>Profit ${cur(o.total-o.cost)}<br>Prep ${o.prep} min<br>Payment: <b>${esc(o.paymentStatus||"Pending")}</b><br><span class="muted">${dateLong(o.createdAt)}<br>${timeLong(o.createdAt)}</span></div><div class="actions">${o.status==="New"?`<button class="btn dark" onclick="statusOrder('${o.id}','Preparing')">Start Preparing</button>`:""}${o.status==="Preparing"?`<button class="btn green" onclick="statusOrder('${o.id}','Ready')">Mark Ready</button>`:""}${o.status==="Ready"?`<button class="btn gold" onclick="statusOrder('${o.id}','Completed')">Complete</button>`:""}<button class="btn" onclick="showInvoice('${o.id}')">Bill</button><button class="btn" onclick="printReceipt('${o.id}')">Receipt</button><button class="btn" onclick="sendBillWhatsApp('${o.id}')">WhatsApp Bill</button>${o.paymentMethod==="UPI"&&o.paymentStatus!=="Paid"?`<button class="btn green" onclick="markPayment('${o.id}','Paid')">Mark Paid</button>`:""}${!['Completed','Cancelled'].includes(o.status)?`<button class="btn red" onclick="cancelOrder('${o.id}')">Cancel</button>`:""}</div></article>`).join("")||"<div class='muted' style='padding:18px'>No orders found.</div>"}
+async function statusOrder(id,s){let o=data.orders.find(x=>x.id===id);if(!o)return;o.status=s;save();renderAdmin();toast(id+" → "+s);await pushOrderUpdate(o)}
+function cancelOrder(id){let o=data.orders.find(x=>x.id===id);if(!o)return;if(confirm("Cancel this order? It will remain in the order history but will not count toward sales/profit.")){o.status="Cancelled";o.cancelledAt=new Date().toISOString();save();renderAdmin();toast(id+" → Cancelled");pushOrderUpdate(o)}}
+function showSuccess(id,prep){$("successText").innerHTML="Your order <b>"+esc(id)+"</b> has been received.<br>Estimated preparation time: <b>"+prep+" minutes</b>.";$("successModal").classList.remove("hidden")}
+function closeSuccess(){$("successModal").classList.add("hidden")}
+function orderWA(id){let o=data.orders.find(x=>x.id===id);if(!o)return;let p=o.phone.replace(/\D/g,"");if(!p)return toast("No phone number");window.open("https://wa.me/"+p+"?text="+encodeURIComponent("Order "+o.id+"\\nStatus: "+o.status+"\\nTotal: "+cur(o.total)),"_blank")}
+function invoiceCalc(o){
+ let rate=Number(data.settings.gstRate)||0;
+ let base=Number(o.total)||0;
+ let gst=base*rate/100;
+ return {rate,base,gst,cgst:gst/2,sgst:gst/2,grand:base+gst};
+}
+function logoHtml(){
+ const name=esc((data.settings.name||"M").slice(0,1));
+ if(data.settings.logo){
+   return `<img class="invLogo" src="${esc(data.settings.logo)}" onerror="this.onerror=null;this.src='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent('<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"72\" height=\"72\"><rect width=\"100%\" height=\"100%\" rx=\"12\" fill=\"#f8f5ee\"/><text x=\"50%\" y=\"58%\" text-anchor=\"middle\" font-family=\"Georgia\" font-size=\"30\" fill=\"#b88a43\">${name}</text></svg>')">`;
+ }
+ return `<div class="invLogo" style="display:grid;place-items:center;font:30px Georgia;color:#b88a43">${name}</div>`;
+}
+function invoiceHTML(o){
+ let c=invoiceCalc(o);
+ let logo=logoHtml();
+ return `<div class="invoice" id="invoiceForPdf">
+ <div class="invHead">
+  <div style="display:flex;gap:13px;align-items:center">${logo}
+   <div><h1 class="invBrand">${esc(data.settings.name||"Restaurant")}</h1>
+   <div class="invMuted">${esc(data.settings.tagline||"")}</div>
+   <div class="invMuted"><b>Address:</b> ${esc(data.settings.address||"Not configured")}</div>
+   <div class="invMuted"><b>Phone:</b> ${esc(data.settings.phone||"Not configured")}${data.settings.email?" • <b>Email:</b> "+esc(data.settings.email):""}</div>
+   <div class="invMuted"><b>GSTIN:</b> ${esc(data.settings.gstin||"Not configured")}</div></div>
+  </div>
+  <div class="invTitle"><h2>TAX INVOICE</h2>
+   <div class="invMuted"><b>Invoice No:</b> ${esc(o.id)}</div>
+   <div class="invMuted"><b>Order No:</b> ${esc(o.id)}</div>
+   <div class="invMuted"><b>Date:</b> ${esc(dateLong(o.createdAt))}</div>
+   <div class="invMuted"><b>Time:</b> ${esc(timeLong(o.createdAt))}</div>
+  </div>
+ </div>
+ <div class="invMeta">
+  <div><b>Bill To / Customer</b><br>Name: ${esc(o.customer||"Walk-in") }<br>WhatsApp/Mobile: ${esc(o.phone||"—")}</div>
+  <div><b>Order Details</b><br>Table: ${esc(o.table||"—")}<br>Status: ${esc(o.status||"—")}<br>Preparation: ${Number(o.prep||0)} minutes</div>
+ </div>
+ <table class="invTable"><thead><tr><th>Food / Service</th><th>Qty</th><th>Rate</th><th>Taxable Amount</th></tr></thead><tbody>
+ ${o.items.map(i=>`<tr><td>${esc(i.name)}</td><td>${i.qty}</td><td>${cur(i.price)}</td><td>${cur(i.price*i.qty)}</td></tr>`).join("")}
+ </tbody></table>
+ <div style="font-size:11px;color:#777;margin-top:7px">All food items are shown individually. Tax is calculated on the taxable subtotal configured for this restaurant.</div>
+ <div class="invTotals">
+  <div class="invRow"><span>Food Subtotal / Taxable Value</span><b>${cur(c.base)}</b></div>
+  <div class="invRow"><span>CGST (${(c.rate/2).toFixed(2)}%)</span><b>${cur(c.cgst)}</b></div>
+  <div class="invRow"><span>SGST (${(c.rate/2).toFixed(2)}%)</span><b>${cur(c.sgst)}</b></div>
+  <div class="invRow"><span>Total GST (${c.rate.toFixed(2)}%)</span><b>${cur(c.gst)}</b></div>
+  <div class="invRow invGrand"><span>Grand Total</span><b>${cur(c.grand)}</b></div>
+ </div>
+ <div class="invGst"><b>GST & Invoice Summary</b><br>GSTIN: ${esc(data.settings.gstin||"Not configured")}<br>Taxable value: ${cur(c.base)} • GST rate: ${c.rate.toFixed(2)}% • CGST: ${cur(c.cgst)} • SGST: ${cur(c.sgst)} • Invoice total: ${cur(c.grand)}</div>
+ ${o.notes?`<div style="margin-top:12px;font-size:12px"><b>Customer Notes:</b> ${esc(o.notes)}</div>`:""}
+ <div class="invFoot">Thank you for dining with us ❤️ • Computer-generated tax invoice • Please retain this invoice for your records.</div>
+ </div>`;
+}
+function showInvoice(id){
+ let o=data.orders.find(x=>x.id===id);
+ if(!o)return;
+ window.currentInvoiceId=id;$("invoiceContent").innerHTML=invoiceHTML(o);
+ $("invoiceModal").classList.remove("hidden");
+}
+function closeInvoice(){$("invoiceModal").classList.add("hidden")}
+function printInvoice(){
+ let source=document.querySelector("#invoiceContent .invoice");
+ if(!source){toast("Open the bill first");return}
+ let w=window.open("","_blank","width=900,height=900");
+ if(!w){alert("Please allow pop-ups for this website.");return}
+ const html=source.outerHTML;
+ w.document.open();
+ w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Tax Invoice</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>
+*{box-sizing:border-box}html,body{margin:0;padding:0;background:#fff;color:#151512;font:14px Arial,sans-serif}.invoice{width:100%;max-width:760px;margin:0 auto;padding:24px;background:#fff}.invHead{display:flex;justify-content:space-between;gap:18px;border-bottom:2px solid #171713;padding-bottom:16px}.invLogo{width:72px;height:72px;object-fit:contain;border-radius:12px;border:1px solid #ddd;background:#f8f5ee}.invBrand{font:29px Georgia,serif;margin:0}.invMuted{color:#666;font-size:12px;line-height:1.55}.invTitle{text-align:right}.invTitle h2{font:22px Georgia,serif;margin:0 0 5px}.invMeta{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;margin:15px 0;font-size:12px}.invTable{width:100%;border-collapse:collapse;table-layout:auto}.invTable th,.invTable td{padding:9px 5px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top}.invTable th:last-child,.invTable td:last-child{text-align:right}.invTotals{margin-left:auto;width:330px;max-width:100%;margin-top:12px}.invRow{display:flex;justify-content:space-between;gap:20px;padding:5px 0}.invGrand{font-size:19px;font-weight:800;border-top:2px solid #111;margin-top:4px;padding-top:8px}.invGst{background:#f5f2eb;padding:9px;margin-top:10px;font-size:12px}.invFoot{text-align:center;border-top:1px solid #ddd;margin-top:18px;padding-top:13px;font-size:11px;color:#777}@media(max-width:600px){.invoice{padding:14px}.invHead{flex-direction:column}.invTitle{text-align:left}.invMeta{grid-template-columns:1fr}.invTotals{width:100%}}@media print{body{margin:0}.invoice{max-width:none;margin:0;padding:10mm}.invTable{page-break-inside:auto}.invTable tr{page-break-inside:avoid;page-break-after:auto}.invHead,.invMeta{page-break-inside:avoid}.invTotals,.invGst,.invFoot{page-break-inside:avoid}}
+</style></head><body>${html}<script>
+window.addEventListener('load',()=>{const imgs=[...document.images];Promise.all(imgs.map(img=>img.complete?Promise.resolve():new Promise(r=>{img.onload=img.onerror=r}))).then(()=>setTimeout(()=>window.print(),500));});
+<\/script></body></html>`);
+ w.document.close();
+}
+function invoicePlainText(o){
+ let c=invoiceCalc(o);
+ return [
+ data.settings.name||"Restaurant",
+ data.settings.address||"",
+ data.settings.phone?"Phone: "+data.settings.phone:"",
+ data.settings.email?"Email: "+data.settings.email:"",
+ data.settings.gstin?"GSTIN: "+data.settings.gstin:"GSTIN: Not configured",
+ "TAX INVOICE",
+ "Invoice No: "+o.id,
+ "Order No: "+o.id,
+ "Date: "+dateLong(o.createdAt),
+ "Time: "+timeLong(o.createdAt),
+ "Customer: "+(o.customer||"Walk-in"),
+ "Mobile: "+(o.phone||"—"),
+ "Table: "+(o.table||"—"),
+ "Status: "+(o.status||"—"),
+ "",
+ ...o.items.map(i=>i.name+" × "+i.qty+" @ "+cur(i.price)+" = "+cur(i.price*i.qty)),
+ "",
+ "Taxable Subtotal: "+cur(c.base),
+ "CGST ("+(c.rate/2).toFixed(2)+"%): "+cur(c.cgst),
+ "SGST ("+(c.rate/2).toFixed(2)+"%): "+cur(c.sgst),
+ "Total GST: "+cur(c.gst),
+ "GRAND TOTAL: "+cur(c.grand),
+ "",
+ "Thank you for dining with us ❤️"
+ ].filter(Boolean).join("\n");
+}
+async function invoiceCanvas(){
+ const el=document.querySelector("#invoiceContent .invoice");
+ if(!el) throw new Error("Invoice is not open");
+ if(!window.html2canvas) {
+   await new Promise((resolve,reject)=>{
+     let s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";s.onload=resolve;s.onerror=reject;document.head.appendChild(s);
+   });
+ }
+ return await html2canvas(el,{scale:2,useCORS:true,backgroundColor:"#ffffff"});
+}
+async function downloadInvoicePDF(){
+ let o=window.currentInvoiceId && data.orders.find(x=>x.id===window.currentInvoiceId);
+ if(!o){let node=document.querySelector("#invoiceContent .invoice"); if(!node){toast("Open the bill first");return}}
+ try{
+   const canvas=await invoiceCanvas();
+   const {jsPDF}=window.jspdf;
+   const pdf=new jsPDF("p","mm","a4");
+   const pageW=210,pageH=297,margin=10;
+   const imgW=pageW-margin*2,imgH=canvas.height*imgW/canvas.width;
+   let y=margin, remaining=imgH, srcY=0;
+   const pxPerMm=canvas.width/imgW;
+   while(remaining>0){
+     let sliceMm=Math.min(remaining,pageH-margin*2);
+     let slicePx=Math.floor(sliceMm*pxPerMm);
+     let c=document.createElement("canvas");c.width=canvas.width;c.height=slicePx;
+     c.getContext("2d").drawImage(canvas,0,srcY,canvas.width,slicePx,0,0,canvas.width,slicePx);
+     let img=c.toDataURL("image/jpeg",.95);
+     if(y>margin)pdf.addPage();
+     pdf.addImage(img,"JPEG",margin,margin,imgW,sliceMm);
+     remaining-=sliceMm;srcY+=slicePx;
+   }
+   let id=o?.id||"invoice";
+   pdf.save((data.settings.name||"Restaurant").replace(/[^a-z0-9]+/gi,"-")+"-"+id+".pdf");
+   toast("PDF downloaded successfully");
+ }catch(e){console.error(e);alert("PDF could not be created. Please use Print → Save as PDF.");}
+}
+async function shareInvoicePDF(){
+ let o=window.currentInvoiceId && data.orders.find(x=>x.id===window.currentInvoiceId);
+ if(!o){toast("Open the bill first");return}
+ try{
+   const canvas=await invoiceCanvas();
+   const {jsPDF}=window.jspdf;
+   const pdf=new jsPDF("p","mm","a4");
+   const imgW=190,imgH=canvas.height*imgW/canvas.width;
+   pdf.addImage(canvas.toDataURL("image/jpeg",.95),"JPEG",10,10,imgW,Math.min(imgH,277));
+   let blob=pdf.output("blob");
+   let file=new File([blob],(data.settings.name||"Restaurant")+"-"+o.id+".pdf",{type:"application/pdf"});
+   if(navigator.canShare && navigator.canShare({files:[file]})){
+     await navigator.share({title:"Tax Invoice "+o.id,text:invoicePlainText(o),files:[file]});
+     toast("Invoice shared");
+     return;
+   }
+   pdf.save(file.name);
+   let p=(o.phone||"").replace(/\\D/g,"");
+   if(p)window.open("https://wa.me/"+p+"?text="+encodeURIComponent(invoicePlainText(o)+"\\n\\nPDF invoice has been downloaded. Please attach the downloaded PDF in this WhatsApp chat."),"_blank");
+   else window.open("https://web.whatsapp.com/?text="+encodeURIComponent(invoicePlainText(o)+"\\n\\nPDF invoice has been downloaded. Please attach the downloaded PDF."),"_blank");
+   toast("PDF downloaded; WhatsApp opened for attachment");
+ }catch(e){console.error(e);alert("Sharing is not supported on this device. Use PDF button, then attach the PDF in WhatsApp.");}
+}
+async function autoSendInvoicePDF(id){
+ let o=data.orders.find(x=>x.id===id);
+ if(!o)return false;
+ if(!data.settings.whatsappApiUrl){return false;}
+ try{
+   const canvas=await invoiceCanvas();
+   const {jsPDF}=window.jspdf;
+   const pdf=new jsPDF("p","mm","a4");
+   const pageW=210, pageH=297, margin=10, imgW=pageW-margin*2, pxPerMm=canvas.width/imgW;
+   let remaining=canvas.height/imgW*imgW/canvas.width*canvas.width*imgW/canvas.width; // normalized below
+   remaining=canvas.height*imgW/canvas.width; let srcY=0;
+   while(remaining>0){
+     const sliceMm=Math.min(remaining,pageH-margin*2); const slicePx=Math.floor(sliceMm*pxPerMm);
+     const cc=document.createElement("canvas"); cc.width=canvas.width; cc.height=slicePx;
+     cc.getContext("2d").drawImage(canvas,0,srcY,canvas.width,slicePx,0,0,canvas.width,slicePx);
+     if(srcY>0)pdf.addPage();
+     pdf.addImage(cc.toDataURL("image/jpeg",.94),"JPEG",margin,margin,imgW,sliceMm);
+     srcY+=slicePx; remaining-=sliceMm;
+   }
+   const blob=pdf.output("blob");
+   const fd=new FormData();
+   fd.append("file",blob,(data.settings.name||"Restaurant")+"-"+o.id+".pdf");
+   fd.append("phone",(o.phone||"").replace(/\D/g,""));
+   fd.append("invoiceId",o.id);
+   fd.append("caption",invoicePlainText(o));
+   const r=await fetch(data.settings.whatsappApiUrl,{method:"POST",body:fd});
+   if(!r.ok)throw new Error("WhatsApp API returned "+r.status);
+   toast("PDF invoice sent to customer WhatsApp"); return true;
+ }catch(e){console.error(e);toast("Automatic WhatsApp PDF failed. Check WhatsApp API settings.");return false;}
+}
+function sendBillWhatsApp(id){window.currentInvoiceId=id;showInvoice(id);setTimeout(()=>shareInvoicePDF(),150)}
+
+
+
+function renderAccounting(){let k=$("accountDate").value||key();$("accountDate").value=k;let a=dayStats(k);$("accountCards").innerHTML=`<div class="mini"><span>Gross Sales</span><b>${cur(a.sales)}</b></div><div class="mini"><span>Food Cost</span><b>${cur(a.cost)}</b></div><div class="mini"><span>Expenses</span><b>${cur(a.expense)}</b></div><div class="mini"><span>Net Profit</span><b class="${a.profit>=0?"greenText":"redText"}">${cur(a.profit)}</b></div><div class="mini"><span>Orders</span><b>${a.os.length}</b></div><div class="mini"><span>Items Sold</span><b>${a.items}</b></div>`;
+ let ex=data.expenses.filter(e=>e.date===k);$("expenseList").innerHTML=ex.map(e=>`<tr><td>${e.date}</td><td>${esc(e.time)}</td><td>${esc(e.note)}</td><td>${cur(e.amount)}</td><td><button class="btn red" onclick="deleteExpense('${e.id}')">×</button></td></tr>`).join("")||"<tr><td colspan='5' class='muted'>No expenses.</td></tr>";
+ $("salesLedger").innerHTML=a.os.map(o=>`<tr><td>${timeLong(o.createdAt)}</td><td>${esc(o.id)}</td><td>${esc(o.customer)}</td><td>${cur(o.total)}</td><td>${cur(o.cost)}</td><td class="${o.total-o.cost>=0?"greenText":"redText"}">${cur(o.total-o.cost)}</td></tr>`).join("")||"<tr><td colspan='6' class='muted'>No sales for this date.</td></tr>"}
+function addExpense(){let k=$("accountDate")?.value||key(),note=prompt("Expense description (e.g. vegetables, gas, salary):");if(!note)return;let amount=Number(prompt("Expense amount ₹:"));if(!Number.isFinite(amount)||amount<=0)return alert("Enter a valid amount.");let now=new Date();data.expenses.push({id:"EXP"+Date.now(),date:k,time:timeLong(now),note,amount});save();renderAdmin();renderAccounting();toast("Expense added")}
+function deleteExpense(id){if(confirm("Delete this expense?")){data.expenses=data.expenses.filter(e=>e.id!==id);save();renderAdmin();renderAccounting();toast("Expense deleted")}}
+
+function renderMenuAdmin(){let q=($("menuSearch")?.value||"").toLowerCase(),list=data.menu.filter(x=>(x.name+" "+x.category).toLowerCase().includes(q));$("menuEditor").innerHTML=list.map((x)=>{let i=data.menu.indexOf(x);return `<div class="menuRow"><input data-i="${i}" data-k="name" value="${esc(x.name)}" placeholder="Dish"><input data-i="${i}" data-k="category" value="${esc(x.category)}" placeholder="Category"><input data-i="${i}" data-k="price" type="number" value="${x.price}" placeholder="Sale"><input data-i="${i}" data-k="cost" type="number" value="${x.cost}" placeholder="Cost"><input data-i="${i}" data-k="prep" type="number" value="${x.prep}" placeholder="Min"><input data-i="${i}" data-k="image" value="${esc(x.image||"")}" placeholder="Image URL"><button class="btn ${x.available===false?"red":"green"}" onclick="toggleDish(${i})">${x.available===false?"Hidden":"Live"}</button><button class="btn red" onclick="deleteDish(${i})">Delete</button></div>`}).join("")||"<p class='muted'>No dishes found.</p>"}
+function addDish(){data.menu.push({id:"M"+Date.now(),name:"New Dish",category:"Main Course",price:0,cost:0,prep:10,description:"",image:"",available:true});save();renderMenuAdmin();toast("New dish added — fill the row and Save All")}
+function collectMenu(){document.querySelectorAll("#menuEditor input").forEach(e=>{let i=+e.dataset.i,k=e.dataset.k;data.menu[i][k]=["price","cost","prep"].includes(k)?Number(e.value)||0:e.value})}
+async function saveMenu(){collectMenu();save();renderCustomer();renderMenuAdmin();renderAdmin();const cfg=onlineConfig();if(cfg.apiUrl&&cfg.adminKey){try{const r=await fetch(cfg.apiUrl,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"menu",key:cfg.adminKey,menu:data.menu})});const j=await r.json();if(!j.ok)throw new Error(j.error||"Menu sync failed");toast("Menu saved online successfully")}catch(e){console.error(e);toast("Menu saved locally, but online save failed")}}else toast("Menu saved locally")}
+function toggleDish(i){collectMenu();data.menu[i].available=data.menu[i].available===false;save();renderMenuAdmin();renderCustomer();toast(data.menu[i].available?"Dish is live":"Dish hidden")}
+function deleteDish(i){if(confirm("Delete "+data.menu[i].name+"?")){data.menu.splice(i,1);save();renderMenuAdmin();renderCustomer();toast("Dish deleted")}}
+function fillSettings(){
+ $("sName").value=data.settings.name||"";$("sTagline").value=data.settings.tagline||"";$("sWhatsApp").value=data.settings.whatsapp||"";$("sPhone").value=data.settings.phone||"";$("sEmail").value=data.settings.email||"";$("sCurrency").value=data.settings.currency||"₹";$("sGSTIN").value=data.settings.gstin||"";$("sGSTRate").value=Number(data.settings.gstRate)||0;$("sLogo").value=data.settings.logo||"";$("sWhatsappApi").value=data.settings.whatsappApiUrl||"";$("sAutoInvoice").checked=!!data.settings.autoSendInvoice;$("sAddress").value=data.settings.address||"";$("sNotice").value=data.settings.notice||"";$("sApiUrl").value=data.settings.apiUrl||"";$("sApiPublicKey").value=data.settings.apiPublicKey||"";$("sApiKey").value=data.settings.apiKey||"";$("sUpiId").value=data.settings.upiId||"";$("sUpiName").value=data.settings.upiName||"";$("sPaymentNote").value=data.settings.paymentNote||"";
+}
+async function saveSettings(){
+ data.settings.name=$("sName").value.trim()||"MAISON";data.settings.tagline=$("sTagline").value.trim();data.settings.whatsapp=$("sWhatsApp").value.trim();data.settings.phone=$("sPhone").value.trim();data.settings.email=$("sEmail").value.trim();data.settings.currency=$("sCurrency").value.trim()||"₹";data.settings.gstin=$("sGSTIN").value.trim();data.settings.gstRate=Math.max(0,Number($("sGSTRate").value)||0);data.settings.logo=$("sLogo").value.trim();data.settings.upiId=$("sUpiId").value.trim();data.settings.upiName=$("sUpiName").value.trim();data.settings.apiUrl=$("sApiUrl").value.trim();data.settings.apiPublicKey=$("sApiPublicKey").value.trim();data.settings.apiKey=$("sApiKey").value.trim();data.settings.whatsappApiUrl=$("sWhatsappApi").value.trim();data.settings.autoSendInvoice=$("sAutoInvoice").checked;data.settings.paymentNote=$("sPaymentNote").value.trim()||"Thank you for your order! Please complete payment using UPI.";data.settings.address=$("sAddress").value.trim();data.settings.notice=$("sNotice").value.trim();
+ save();renderCustomer();renderAdmin();const cfg=onlineConfig();if(cfg.apiUrl&&cfg.adminKey){try{const publicSettings={name:data.settings.name,tagline:data.settings.tagline,whatsapp:data.settings.whatsapp,currency:data.settings.currency,notice:data.settings.notice,gstin:data.settings.gstin,address:data.settings.address,phone:data.settings.phone,email:data.settings.email,gstRate:data.settings.gstRate,logo:data.settings.logo,upiId:data.settings.upiId,upiName:data.settings.upiName,paymentNote:data.settings.paymentNote};const r=await fetch(cfg.apiUrl,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"settings",key:cfg.adminKey,settings:publicSettings})});const j=await r.json();if(!j.ok)throw new Error(j.error||"Settings sync failed");toast("Restaurant settings saved online")}catch(e){console.error(e);toast("Settings saved locally, but online save failed")}}else toast("Restaurant settings saved")
+}
+function exportData(){let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="maison-restaurant-backup-"+key()+".json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast("Backup exported")}
+function importData(inp){let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x.menu||!x.settings||!x.password)throw 0;data=x;save();renderCustomer();renderAdmin();toast("Backup imported")}catch(e){alert("Invalid backup file")}};r.readAsText(f)}
+function resetData(){if(confirm("Reset all local menu, orders and accounting data to demo data?")){data=structuredClone(DEFAULT);save();renderCustomer();renderAdmin();toast("Demo data restored")}}
+
+renderCustomer();
+bootstrapOnlineData();
+</script>
+</body>
+</html>
